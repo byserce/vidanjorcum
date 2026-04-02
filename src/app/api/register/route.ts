@@ -40,7 +40,7 @@ export async function POST(req: Request) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const finalRole = email === "admin@vidanjorcum.com" ? "ADMIN" : (role === "OPERATOR" ? "OPERATOR" : "USER");
+    const finalRole = (email === "admin@vidanjorcum.com" || email === "admin2@vidanjorcum.com") ? "ADMIN" : (role === "OPERATOR" ? "OPERATOR" : "USER");
 
     // Operatörler için telefon numarası kontrolü
     if (finalRole === "OPERATOR") {

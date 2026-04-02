@@ -169,7 +169,11 @@ export default function RegisterPage() {
       setCanResend(false);
     } catch (err: any) {
       console.error("SMS Error:", err);
-      setOtpError("SMS gönderilemedi. Lütfen numarayı (+90...) formatında girdiğinizden emin olun.");
+      if (err.code === "auth/captcha-check-failed") {
+        setOtpError("Hata: Bu alan adı (hostname) yetkilendirilmemiş. Lütfen Firebase Console'dan alan adınızı ekleyin.");
+      } else {
+        setOtpError("SMS gönderilemedi. Lütfen numarayı (+90...) formatında girdiğinizden emin olun.");
+      }
       if ((window as any).recaptchaVerifier) {
         (window as any).recaptchaVerifier.clear();
         (window as any).recaptchaVerifier = null;

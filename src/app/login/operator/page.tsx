@@ -80,7 +80,11 @@ export default function OperatorLoginPage() {
       setStep("phone");
     } catch (err: any) {
       console.error("SMS Error:", err);
-      setError("Güvenlik doğrulaması başlatılamadı. Lütfen tekrar deneyin.");
+      if (err.code === "auth/captcha-check-failed") {
+        setError("Hata: Bu alan adı (hostname) yetkilendirilmemiş. Lütfen Firebase Console'dan alan adınızı ekleyin.");
+      } else {
+        setError("Güvenlik doğrulaması başlatılamadı. Lütfen tekrar deneyin.");
+      }
     } finally {
       setLoading(false);
     }

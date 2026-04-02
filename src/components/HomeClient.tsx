@@ -111,40 +111,88 @@ export default function HomeClient({ pendingJobsCount }: { pendingJobsCount: num
       return;
     }
     
+    // Yardımcı fonksiyon: Metni temizle ve Büyük harfe çevir (Türkçe karakter duyarlı)
+    const normalize = (str: string) => {
+      if (!str) return "";
+      return str
+        .replace(/( İli| İlçesi| Belediyesi| Valiliği| Büyükşehir Belediyesi| Eyaleti| Province| City| State)$/i, "")
+        .trim()
+        .toLocaleUpperCase('tr-TR');
+    };
+
     navigator.geolocation.getCurrentPosition(async (position) => {
       try {
         const { latitude, longitude } = position.coords;
         const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1`);
+        
         if (res.ok) {
           const data = await res.json();
           const address = data.address;
-          const foundCity = address.province || address.city || address.state;
-          const foundDistrict = address.town || address.county || address.district;
           
-          if (foundCity) {
-            let matchedCity = Object.keys(LOCATION_DATA).find(c => foundCity.includes(c) || c.includes(foundCity));
+          // Nominatim'den gelen farklı alanları kontrol et
+          const rawCity = address.province || address.city || address.state || address.admin_area;
+          const rawDistrict = address.town || address.district || address.county || address.suburb || address.city_district;
+          
+          if (rawCity) {
+            const searchCity = normalize(rawCity);
+            const cities = Object.keys(LOCATION_DATA);
+            
+            // 1. Tam eşleşme ara
+            let matchedCity = cities.find(c => c === searchCity);
+            
+            // 2. Kısmi eşleşme ara (İçinde geçiyor mu?)
             if (!matchedCity) {
-               matchedCity = Object.keys(LOCATION_DATA).find(c => c.localeCompare(foundCity, 'tr', { sensitivity: 'base' }) === 0);
+              matchedCity = cities.find(c => searchCity.includes(c) || c.includes(searchCity));
             }
+            
+            // 3. LocaleCompare ile garantiye al
+            if (!matchedCity) {
+              matchedCity = cities.find(c => c.localeCompare(searchCity, 'tr', { sensitivity: 'base' }) === 0);
+            }
+
             if (matchedCity) {
-              const newRegion = { city: matchedCity, district: foundDistrict };
+              // İlçe eşleştirmesi
+              let matchedDistrict = undefined;
+              if (rawDistrict) {
+                const searchDistrict = normalize(rawDistrict);
+                const districts = Object.keys(LOCATION_DATA[matchedCity] || {});
+                matchedDistrict = districts.find(d => 
+                  d === searchDistrict || 
+                  searchDistrict.includes(d) || 
+                  d.includes(searchDistrict) ||
+                  d.localeCompare(searchDistrict, 'tr', { sensitivity: 'base' }) === 0
+                );
+              }
+
+              const newRegion = { city: matchedCity, district: matchedDistrict };
               setRegion(newRegion);
               localStorage.setItem("vidanjorcum_region", JSON.stringify(newRegion));
+              
+              // Seçimi senkronize et
+              setTempCity(matchedCity);
+              if (matchedDistrict) setTempDistrict(matchedDistrict);
+              
             } else {
-               alert("Konumunuza en uygun il bulunamadı. Lütfen listeden seçiniz.");
+              alert(`Konumunuzdaki il (${rawCity}) hizmet bölgelerimizde bulunamadı. Lütfen listeden seçiniz.`);
             }
           } else {
             alert("Konumunuzdaki il tespit edilemedi. Lütfen listeden seçiniz.");
           }
         }
       } catch (err) {
-        alert("Konum çözümlenirken bir hata oluştu.");
+        console.error("Geolocation error:", err);
+        alert("Konum çözümlenirken bir hata oluştu. Lütfen İnternet bağlantınızı kontrol edin.");
       }
       setLoadingLocation(false);
     }, (err) => {
-      alert("Konum izni reddedildi veya bulunamadı.");
+      let msg = "Konum izni reddedildi veya konum bulunamadı.";
+      if (err.code === 1) msg = "Konum izni reddedildi. Lütfen tarayıcı ayarlarından konuma izin verin.";
+      else if (err.code === 2) msg = "Konum bilgisi alınamadı (GPS kapalı olabilir).";
+      else if (err.code === 3) msg = "Konum alma işlemi zaman aşımına uğradı.";
+      
+      alert(msg);
       setLoadingLocation(false);
-    });
+    }, { timeout: 10000 });
   };
 
   useEffect(() => {

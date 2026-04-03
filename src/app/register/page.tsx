@@ -7,6 +7,8 @@ import { User, Phone, Mail, Lock, Shield, CheckCircle2 } from "lucide-react";
 import { AuthNavigation } from "@/components/AuthNavigation";
 import { auth } from "@/lib/firebase";
 import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from "firebase/auth";
+import { OtpInput } from "@/components/OtpInput";
+import { validateTurkishPhone, normalizeTurkishPhone, checkOtpRateLimit, incrementOtpAttempts } from "@/lib/auth-utils";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -142,13 +144,20 @@ export default function RegisterPage() {
       return;
     }
 
-    // Telefon numarası formatı kontrolü (+90 formatına çevir)
-    let formattedPhone = formData.phone.trim();
-    if (formattedPhone.startsWith("0")) {
-      formattedPhone = "+90" + formattedPhone.substring(1);
-    } else if (!formattedPhone.startsWith("+")) {
-      formattedPhone = "+90" + formattedPhone;
+    // Telefon numarası formatı kontrolü (Türk numarası mı?)
+    if (!validateTurkishPhone(formData.phone)) {
+      setOtpError("Lütfen geçerli bir Türk telefon numarası giriniz (Örn: 05xx xxx xx xx)");
+      return;
     }
+
+    // Hız limiti kontrolü (1 saatte max 3 istek)
+    const rateLimit = checkOtpRateLimit(formData.phone);
+    if (!rateLimit.allowed) {
+      setOtpError(rateLimit.message || "Çok fazla istek attınız. Lütfen daha sonra tekrar deneyin.");
+      return;
+    }
+
+    const formattedPhone = normalizeTurkishPhone(formData.phone);
 
     setSendingOtp(true);
     setOtpError("");
@@ -163,6 +172,10 @@ export default function RegisterPage() {
       
       const appVerifier = (window as any).recaptchaVerifier;
       const result = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
+      
+      // İstek başarılı olduysa sayacı artır
+      incrementOtpAttempts(formData.phone);
+      
       setConfirmationResult(result);
       setIsOtpSent(true);
       setTimer(90);
@@ -358,16 +371,16 @@ export default function RegisterPage() {
                   )}
                 </div>
                 
-                <div className="flex gap-2">
-                  <input 
-                    type="text" 
-                    maxLength={6}
+                <div className="py-2">
+                  <OtpInput 
+                    length={6}
                     value={otpCode}
-                    onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
-                    className="flex-1 bg-slate-900 border border-slate-800 focus:border-sky-500 rounded-xl px-4 py-4 text-white outline-none transition-all text-center tracking-[0.5em] font-mono text-xl"
-                    placeholder="000000"
-                    disabled={timer === 0 && !canResend}
-                    autoFocus
+                    onChange={(val) => {
+                       setOtpCode(val);
+                       setOtpError("");
+                    }}
+                    disabled={verifyingOtp || (timer === 0 && !canResend)}
+                    color="sky"
                   />
                 </div>
 

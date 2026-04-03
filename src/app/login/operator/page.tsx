@@ -8,6 +8,8 @@ import { Lock, Phone, CheckCircle2, ShieldCheck, ChevronLeft } from "lucide-reac
 import { AuthNavigation } from "@/components/AuthNavigation";
 import { auth } from "@/lib/firebase";
 import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from "firebase/auth";
+import { OtpInput } from "@/components/OtpInput";
+import { validateTurkishPhone, checkOtpRateLimit, incrementOtpAttempts, normalizeTurkishPhone } from "@/lib/auth-utils";
 
 export default function OperatorLoginPage() {
   const router = useRouter();
@@ -59,12 +61,22 @@ export default function OperatorLoginPage() {
     setError("");
     setOtpError("");
     
-    let formattedPhone = phone.trim();
-    if (formattedPhone.startsWith("0")) {
-      formattedPhone = "+90" + formattedPhone.substring(1);
-    } else if (!formattedPhone.startsWith("+")) {
-      formattedPhone = "+90" + formattedPhone;
+    // Telefon numarası formatı kontrolü
+    if (!validateTurkishPhone(phone)) {
+      setError("Hesabınıza kayıtlı telefon numarası geçersiz. Lütfen destekle iletişime geçin.");
+      setLoading(false);
+      return;
     }
+
+    // Hız limiti kontrolü
+    const rateLimit = checkOtpRateLimit(phone);
+    if (!rateLimit.allowed) {
+      setError(rateLimit.message || "Çok fazla deneme yaptınız.");
+      setLoading(false);
+      return;
+    }
+
+    const formattedPhone = normalizeTurkishPhone(phone);
 
     try {
       if (!(window as any).recaptchaVerifier) {
@@ -76,6 +88,10 @@ export default function OperatorLoginPage() {
       
       const appVerifier = (window as any).recaptchaVerifier;
       const result = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
+      
+      // Başarılıysa sayacı artır
+      incrementOtpAttempts(phone);
+      
       setConfirmationResult(result);
       setStep("phone");
     } catch (err: any) {
@@ -196,17 +212,18 @@ export default function OperatorLoginPage() {
                 <label className="block text-center text-[10px] font-bold text-orange-400 uppercase tracking-widest mb-3" htmlFor="otp">
                    6 Haneli SMS Kodu
                 </label>
-                <input
-                  id="otp"
-                  type="text"
-                  maxLength={6}
-                  value={otpCode}
-                  onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
-                  required
-                  className="w-full bg-slate-950 border border-slate-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-xl px-4 py-4 text-white outline-none transition-all text-center text-2xl tracking-[0.5em] font-mono"
-                  placeholder="000000"
-                  autoFocus
-                />
+                <div className="py-2">
+                  <OtpInput 
+                    length={6}
+                    value={otpCode}
+                    onChange={(val) => {
+                      setOtpCode(val);
+                      setOtpError("");
+                    }}
+                    disabled={verifyingOtp}
+                    color="orange"
+                  />
+                </div>
                 {otpError && (
                   <p className="text-red-500 text-xs text-center mt-2 font-medium">{otpError}</p>
                 )}

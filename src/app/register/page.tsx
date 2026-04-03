@@ -163,10 +163,25 @@ export default function RegisterPage() {
     setOtpError("");
     
     try {
+      // 1. Veritabanında kontrol et (Önce bizim sistemimizde var mı?)
+      const checkRes = await fetch("/api/auth/check-phone", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: formData.phone }),
+      });
+
+      if (!checkRes.ok) {
+        const { message } = await checkRes.json();
+        setOtpError(message);
+        setSendingOtp(false);
+        return;
+      }
+
+      // 2. Firebase ile SMS gönderimini başlat
       if (!(window as any).recaptchaVerifier) {
-        (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-          'size': 'normal',
-          'callback': () => {}
+        (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+          size: "normal",
+          callback: () => {},
         });
       }
       

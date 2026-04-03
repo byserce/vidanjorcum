@@ -141,21 +141,25 @@ export default function RegisterPage() {
   };
 
   const handleSendOtp = async (): Promise<boolean> => {
+    const setErrorState = isVerifying ? setOtpError : setError;
+    setError("");
+    setOtpError("");
+
     if (!formData.phone) {
-      setOtpError("Lütfen bir telefon numarası giriniz");
+      setErrorState("Lütfen telefon numaranızı giriniz.");
       return false;
     }
 
     // Telefon numarası formatı kontrolü (Türk numarası mı?)
     if (!validateTurkishPhone(formData.phone)) {
-      setOtpError("Lütfen geçerli bir Türk telefon numarası giriniz (Örn: 05xx xxx xx xx)");
+      setErrorState("Telefon numarası formatı hatalı. Lütfen 05xx xxx xx xx şeklinde 11 haneli olacak şekilde giriniz.");
       return false;
     }
 
     // Hız limiti kontrolü (1 saatte max 3 istek)
     const rateLimit = checkOtpRateLimit(formData.phone);
     if (!rateLimit.allowed) {
-      setOtpError(rateLimit.message || "Çok fazla istek attınız. Lütfen daha sonra tekrar deneyin.");
+      setErrorState(rateLimit.message || "Çok fazla kod isteği gönderdiniz. Lütfen bir süre bekleyip tekrar deneyin.");
       return false;
     }
 
@@ -174,7 +178,7 @@ export default function RegisterPage() {
 
       if (!checkRes.ok) {
         const { message } = await checkRes.json();
-        setOtpError(message);
+        setErrorState(message || "Bu numara zaten kayıtlı veya bir hata oluştu.");
         setSendingOtp(false);
         return false;
       }
@@ -201,9 +205,9 @@ export default function RegisterPage() {
     } catch (err: any) {
       console.error("SMS Error:", err);
       if (err.code === "auth/captcha-check-failed") {
-        setOtpError("Hata: Bu alan adı (hostname) yetkilendirilmemiş. Lütfen Firebase Console'dan alan adınızı ekleyin.");
+        setErrorState("Güvenlik doğrulaması başarısız oldu (Captcha).");
       } else {
-        setOtpError("SMS gönderilemedi. Lütfen numarayı (+90...) formatında girdiğinizden emin olun.");
+        setErrorState("SMS gönderilirken bir hata oluştu. Lütfen numaranızın doğru olduğundan emin olun.");
       }
       if ((window as any).recaptchaVerifier) {
         (window as any).recaptchaVerifier.clear();

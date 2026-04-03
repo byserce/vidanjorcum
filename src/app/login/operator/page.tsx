@@ -62,12 +62,13 @@ export default function OperatorLoginPage() {
   };
 
   const handleSendOtp = async (phone: string): Promise<boolean> => {
+    const setErrorState = step === "credentials" ? setError : setOtpError;
     setError("");
     setOtpError("");
     
     // Telefon numarası formatı kontrolü
     if (!validateTurkishPhone(phone)) {
-      setError("Hesabınıza kayıtlı telefon numarası geçersiz. Lütfen destekle iletişime geçin.");
+      setErrorState("Sistemdeki telefon numaranız geçersiz formatta. Lütfen destekle iletişime geçin.");
       setLoading(false);
       return false;
     }
@@ -75,7 +76,7 @@ export default function OperatorLoginPage() {
     // Hız limiti kontrolü
     const rateLimit = checkOtpRateLimit(phone);
     if (!rateLimit.allowed) {
-      setError(rateLimit.message || "Çok fazla deneme yaptınız.");
+      setErrorState(rateLimit.message || "Çok fazla kod isteği gönderdiniz. Lütfen bekleyin.");
       setLoading(false);
       return false;
     }
@@ -102,9 +103,9 @@ export default function OperatorLoginPage() {
     } catch (err: any) {
       console.error("SMS Error:", err);
       if (err.code === "auth/captcha-check-failed") {
-        setError("Hata: Bu alan adı (hostname) yetkilendirilmemiş. Lütfen Firebase Console'dan alan adınızı ekleyin.");
+        setErrorState("Güvenlik doğrulaması başarısız oldu (Captcha).");
       } else {
-        setError("Güvenlik doğrulaması başlatılamadı. Lütfen tekrar deneyin.");
+        setErrorState("SMS gönderilirken bir hata oluştu. Lütfen tekrar deneyin.");
       }
       return false;
     } finally {

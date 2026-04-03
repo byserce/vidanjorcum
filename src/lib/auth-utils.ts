@@ -8,15 +8,22 @@
  * Domestic mobile numbers in Turkey are 10 digits starting with 5.
  */
 export function validateTurkishPhone(phone: string): boolean {
-  // Remove spaces, hyphens, and parentheses
+  // Alan kodları, boşluklar vb. temizle
   const cleaned = phone.replace(/[\s\-\(\)]/g, "");
   
-  // Regex: 
-  // ^(\+90|0)? -> optional +90 or 0 prefix
-  // 5\d{9}$ -> must start with 5 and have 9 more digits
-  const trPhoneRegex = /^(\+90|0)?5\d{9}$/;
+  // Türkiye mobil numara formatı:
+  // 5xx xxx xx xx (10 hane)
+  // 05xx xxx xx xx (11 hane)
+  // +905xx xxx xx xx (13 hane)
   
-  return trPhoneRegex.test(cleaned);
+  if (cleaned.startsWith("+90")) {
+    return cleaned.length === 13 && /^\+905\d{9}$/.test(cleaned);
+  }
+  if (cleaned.startsWith("0")) {
+    return cleaned.length === 11 && /^05\d{9}$/.test(cleaned);
+  }
+  // Başında 0 veya +90 yoksa direkt 5 ile başlamalı ve 10 hane olmalı
+  return cleaned.length === 10 && /^5\d{9}$/.test(cleaned);
 }
 
 /**

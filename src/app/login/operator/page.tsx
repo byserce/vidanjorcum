@@ -49,7 +49,11 @@ export default function OperatorLoginPage() {
           return;
         }
         setUserPhone(phone);
-        handleSendOtp(phone);
+        const otpSuccess = await handleSendOtp(phone);
+        if (!otpSuccess) {
+          setLoading(false);
+          return;
+        }
       } else {
         setError("Bu sayfa sadece operatör girişleri içindir.");
         setLoading(false);
@@ -57,7 +61,7 @@ export default function OperatorLoginPage() {
     }
   };
 
-  const handleSendOtp = async (phone: string) => {
+  const handleSendOtp = async (phone: string): Promise<boolean> => {
     setError("");
     setOtpError("");
     
@@ -65,7 +69,7 @@ export default function OperatorLoginPage() {
     if (!validateTurkishPhone(phone)) {
       setError("Hesabınıza kayıtlı telefon numarası geçersiz. Lütfen destekle iletişime geçin.");
       setLoading(false);
-      return;
+      return false;
     }
 
     // Hız limiti kontrolü
@@ -73,7 +77,7 @@ export default function OperatorLoginPage() {
     if (!rateLimit.allowed) {
       setError(rateLimit.message || "Çok fazla deneme yaptınız.");
       setLoading(false);
-      return;
+      return false;
     }
 
     const formattedPhone = normalizeTurkishPhone(phone);
@@ -94,6 +98,7 @@ export default function OperatorLoginPage() {
       
       setConfirmationResult(result);
       setStep("phone");
+      return true;
     } catch (err: any) {
       console.error("SMS Error:", err);
       if (err.code === "auth/captcha-check-failed") {
@@ -101,6 +106,7 @@ export default function OperatorLoginPage() {
       } else {
         setError("Güvenlik doğrulaması başlatılamadı. Lütfen tekrar deneyin.");
       }
+      return false;
     } finally {
       setLoading(false);
     }

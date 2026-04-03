@@ -59,8 +59,10 @@ export default function RegisterPage() {
     
     if (role === "OPERATOR") {
       // Operatörler için önce doğrulama ekranına geç ve SMS gönder
-      await handleSendOtp();
-      setIsVerifying(true);
+      const success = await handleSendOtp();
+      if (success) {
+        setIsVerifying(true);
+      }
       return;
     }
 
@@ -138,23 +140,23 @@ export default function RegisterPage() {
     }
   };
 
-  const handleSendOtp = async () => {
+  const handleSendOtp = async (): Promise<boolean> => {
     if (!formData.phone) {
       setOtpError("Lütfen bir telefon numarası giriniz");
-      return;
+      return false;
     }
 
     // Telefon numarası formatı kontrolü (Türk numarası mı?)
     if (!validateTurkishPhone(formData.phone)) {
       setOtpError("Lütfen geçerli bir Türk telefon numarası giriniz (Örn: 05xx xxx xx xx)");
-      return;
+      return false;
     }
 
     // Hız limiti kontrolü (1 saatte max 3 istek)
     const rateLimit = checkOtpRateLimit(formData.phone);
     if (!rateLimit.allowed) {
       setOtpError(rateLimit.message || "Çok fazla istek attınız. Lütfen daha sonra tekrar deneyin.");
-      return;
+      return false;
     }
 
     const formattedPhone = normalizeTurkishPhone(formData.phone);
@@ -174,7 +176,7 @@ export default function RegisterPage() {
         const { message } = await checkRes.json();
         setOtpError(message);
         setSendingOtp(false);
-        return;
+        return false;
       }
 
       // 2. Firebase ile SMS gönderimini başlat
@@ -195,6 +197,7 @@ export default function RegisterPage() {
       setIsOtpSent(true);
       setTimer(90);
       setCanResend(false);
+      return true;
     } catch (err: any) {
       console.error("SMS Error:", err);
       if (err.code === "auth/captcha-check-failed") {
@@ -206,6 +209,7 @@ export default function RegisterPage() {
         (window as any).recaptchaVerifier.clear();
         (window as any).recaptchaVerifier = null;
       }
+      return false;
     } finally {
       setSendingOtp(false);
     }

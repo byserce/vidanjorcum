@@ -4,6 +4,8 @@ import "./globals.css";
 import { Providers } from "@/components/Providers";
 import JsonLd from "@/components/SEO/JsonLd";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
+import CookieConsent from "@/components/Legal/CookieConsent";
+import FloatingWhatsApp from "@/components/Contact/FloatingWhatsApp";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -81,7 +83,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="tr">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -89,6 +91,8 @@ export default function RootLayout({
           <GoogleAnalytics />
           <JsonLd />
           {children}
+          <CookieConsent />
+          <FloatingWhatsApp />
         </Providers>
       </body>
     </html>

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Lock, Phone, CheckCircle2, ShieldCheck, ChevronLeft } from "lucide-react";
+import { Lock, Phone, CheckCircle2, ShieldCheck, ChevronLeft, MessageCircle } from "lucide-react";
 import { AuthNavigation } from "@/components/AuthNavigation";
 import { auth } from "@/lib/firebase";
 import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from "firebase/auth";
@@ -200,6 +200,16 @@ export default function OperatorLoginPage() {
               >
                 {loading ? "Bilgiler Kontrol Ediliyor..." : "Devam Et"}
               </button>
+
+              <a 
+                href="https://wa.me/905050366080?text=Merhaba,%20operatör%20girişi%20yaparken%20sorun%20yaşıyorum."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full py-3 text-emerald-400 text-xs font-bold bg-emerald-500/5 hover:bg-emerald-500/10 border border-emerald-500/20 rounded-xl transition-all mt-2"
+              >
+                <MessageCircle className="w-4 h-4" />
+                Giriş Sorunu mu Yaşıyorsunuz? WhatsApp Destek
+              </a>
             </form>
           ) : (
             <form onSubmit={handleVerifyOtp} className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -260,10 +270,23 @@ export default function OperatorLoginPage() {
                 Hemen Kaydolun
              </Link>
              
-             <p className="text-slate-500 text-[10px] mb-1">Operatör değil misiniz?</p>
-             <Link href="/login/customer" className="text-white text-xs hover:underline decoration-sky-500 underline-offset-4 transition-all">
-                Müşteri Girişi Yapın
-             </Link>
+             <div className="mt-8 flex flex-col items-center gap-4">
+               <a 
+                  href="https://wa.me/905050366080?text=Merhaba,%20platformda%20reklam%20vermek%20istiyorum."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-6 py-2.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-sm font-bold rounded-full border border-emerald-500/20 transition-all"
+               >
+                  <MessageCircle className="w-4 h-4" />
+                  Reklam ve İş Birliği İçin WhatsApp
+               </a>
+               
+               <div className="opacity-20 hover:opacity-100 transition-opacity">
+                  <Link href="/login/admin" className="text-[10px] text-slate-600 uppercase tracking-widest hover:text-rose-500 transition-colors">
+                     Yönetici Girişi
+                  </Link>
+               </div>
+            </div>
           </div>
         </div>
       </div>

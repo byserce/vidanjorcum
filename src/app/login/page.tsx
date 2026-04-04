@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { User, Truck, ChevronRight } from "lucide-react";
+import { User, Truck, ChevronRight, MessageCircle } from "lucide-react";
 import { AuthNavigation } from "@/components/AuthNavigation";
 
 export default function LoginPage() {
@@ -78,10 +78,22 @@ export default function LoginPage() {
            </Link>
         </p>
 
-        <div className="mt-8 opacity-20 hover:opacity-100 transition-opacity">
-           <Link href="/login/admin" className="text-[10px] text-slate-600 uppercase tracking-widest hover:text-rose-500 transition-colors">
-              Yönetici Girişi
-           </Link>
+        <div className="mt-8 flex flex-col items-center gap-4">
+           <a 
+              href="https://wa.me/905050366080?text=Merhaba,%20platformda%20reklam%20vermek%20istiyorum."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-6 py-2.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-sm font-bold rounded-full border border-emerald-500/20 transition-all"
+           >
+              <MessageCircle className="w-4 h-4" />
+              Reklam ve İş Birliği İçin WhatsApp
+           </a>
+           
+           <div className="opacity-20 hover:opacity-100 transition-opacity">
+              <Link href="/login/admin" className="text-[10px] text-slate-600 uppercase tracking-widest hover:text-rose-500 transition-colors">
+                 Yönetici Girişi
+              </Link>
+           </div>
         </div>
       </div>
     </div>

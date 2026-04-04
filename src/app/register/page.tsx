@@ -24,6 +24,7 @@ import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from "fi
 import { OtpInput } from "@/components/OtpInput";
 import { StepProgress } from "@/components/StepProgress";
 import { validateTurkishPhone, normalizeTurkishPhone, checkOtpRateLimit, incrementOtpAttempts } from "@/lib/auth-utils";
+import LegalModal from "@/components/Legal/LegalModal";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -54,6 +55,15 @@ export default function RegisterPage() {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
   const recaptchaRef = useRef<HTMLDivElement>(null);
+
+  // Legal States
+  const [agreedKVKK, setAgreedKVKK] = useState(false);
+  const [agreedTerms, setAgreedTerms] = useState(false);
+  const [legalModal, setLegalModal] = useState<{ isOpen: boolean; title: string; content: string }>({
+    isOpen: false,
+    title: "",
+    content: ""
+  });
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -166,6 +176,11 @@ export default function RegisterPage() {
     
     if (!isCaptchaVerified) {
       setError("Lütfen robot olmadığınızı doğrulayın.");
+      return;
+    }
+
+    if (!agreedKVKK || !agreedTerms) {
+      setError("Devam etmek için KVKK metnini ve kullanım sözleşmesini kabul etmelisiniz.");
       return;
     }
 
@@ -583,6 +598,61 @@ export default function RegisterPage() {
                     )}
                   </div>
 
+                  {/* Legal Checkboxes */}
+                  <div className="space-y-3 pt-4 border-t border-slate-800/50">
+                    <label className="flex items-start gap-3 cursor-pointer group">
+                      <div className="relative flex items-center mt-0.5">
+                        <input
+                          type="checkbox"
+                          checked={agreedKVKK}
+                          onChange={(e) => setAgreedKVKK(e.target.checked)}
+                          className="peer h-5 w-5 bg-slate-950 border border-slate-800 rounded-lg checked:bg-sky-500 checked:border-sky-500 transition-all cursor-pointer outline-none appearance-none"
+                        />
+                        <Check className="absolute w-4 h-4 text-slate-950 opacity-0 peer-checked:opacity-100 left-0.5 transition-opacity pointer-events-none" />
+                      </div>
+                      <span className="text-xs text-slate-400 leading-relaxed group-hover:text-slate-300 transition-colors">
+                        <button 
+                          type="button" 
+                          onClick={() => setLegalModal({ 
+                            isOpen: true, 
+                            title: "KVKK Aydınlatma Metni", 
+                            content: `Kişisel verilerinizin işlenmesine ilişkin aydınlatma metni...\n\nVidanjörcüm olarak kişisel verilerinizin güvenliği hususuna azami hassasiyet göstermekteyiz. Bu kapsamda, ürün ve hizmetlerimizden faydalanan kişiler dahil, şirket ile ilişkili tüm şahıslara ait her türlü kişisel verilerin 6698 sayılı Kişisel Verilerin Korunması Kanunu'na uygun olarak işlenerek, muhafaza edilmesine büyük önem vermekteyiz.`
+                          })}
+                          className="text-sky-400 font-bold hover:underline"
+                        >
+                          KVKK Aydınlatma Metni
+                        </button>{" "}
+                        'ni okudum ve anladım.
+                      </span>
+                    </label>
+
+                    <label className="flex items-start gap-3 cursor-pointer group">
+                      <div className="relative flex items-center mt-0.5">
+                        <input
+                          type="checkbox"
+                          checked={agreedTerms}
+                          onChange={(e) => setAgreedTerms(e.target.checked)}
+                          className="peer h-5 w-5 bg-slate-950 border border-slate-800 rounded-lg checked:bg-sky-500 checked:border-sky-500 transition-all cursor-pointer outline-none appearance-none"
+                        />
+                        <Check className="absolute w-4 h-4 text-slate-950 opacity-0 peer-checked:opacity-100 left-0.5 transition-opacity pointer-events-none" />
+                      </div>
+                      <span className="text-xs text-slate-400 leading-relaxed group-hover:text-slate-300 transition-colors">
+                        <button 
+                          type="button"
+                          onClick={() => setLegalModal({ 
+                            isOpen: true, 
+                            title: "Kullanım Koşulları ve Sözleşme", 
+                            content: `Kullanım Koşulları ve Üyelik Sözleşmesi...\n\nBu internet sitesine girmeniz veya bu internet sitesindeki herhangi bir bilgiyi kullanmanız aşağıdaki koşulları kabul ettiğiniz anlamına gelir. Bu internet sitesine girilmesi, sitenin ya da sitedeki bilgilerin ve diğer verilerin programların vs. kullanılması sebebiyle, sözleşmenin ihlali, haksız fiil, ya da başkaca sebeplere binaen, doğabilecek doğrudan ya da dolaylı hiçbir zarardan Vidanjörcüm sorumlu değildir.`
+                          })}
+                          className="text-sky-400 font-bold hover:underline"
+                        >
+                          Kullanım Koşulları ve Üyelik Sözleşmesi
+                        </button>{" "}
+                        'ni kabul ediyorum.
+                      </span>
+                    </label>
+                  </div>
+
                   <div className="pt-4 border-t border-slate-800/50 mt-4 space-y-4">
                     <div className="flex flex-col items-center space-y-2">
                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Güvenlik Doğrulaması</p>
@@ -746,6 +816,13 @@ export default function RegisterPage() {
           </div>
         </div>
       </div>
+
+      <LegalModal 
+        isOpen={legalModal.isOpen} 
+        onClose={() => setLegalModal({ ...legalModal, isOpen: false })}
+        title={legalModal.title}
+        content={legalModal.content}
+      />
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { useState, Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Mail, Lock, ChevronLeft, Globe, AlertCircle, UserPlus } from "lucide-react";
+import { Mail, Lock, ChevronLeft, Globe, AlertCircle, UserPlus, MessageCircle } from "lucide-react";
 import { AuthNavigation } from "@/components/AuthNavigation";
 import { auth } from "@/lib/firebase";
 
@@ -163,6 +163,16 @@ function CustomerLoginContent() {
             >
               {loading ? "Giriş Yapılıyor..." : "Giriş Yap"}
             </button>
+
+            <a 
+              href="https://wa.me/905050366080?text=Merhaba,%20giriş%20yaparken%20sorun%20yaşıyorum."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full py-3 text-emerald-400 text-xs font-bold bg-emerald-500/5 hover:bg-emerald-500/10 border border-emerald-500/20 rounded-xl transition-all mt-2"
+            >
+              <MessageCircle className="w-4 h-4" />
+              Giriş Sorunu mu Yaşıyorsunuz? WhatsApp Destek
+            </a>
           </form>
 
           <div className="mt-8 pt-6 border-t border-slate-800/50 flex flex-col items-center">

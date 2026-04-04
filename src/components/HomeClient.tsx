@@ -10,6 +10,7 @@ import EditJobModal from "@/components/EditJobModal";
 import locationData from "@/data/location_data.json";
 import ImageMarquee from "@/components/ImageMarquee";
 import Link from "next/link";
+import ActiveUsersCounter from "@/components/ActiveUsersCounter";
 
 const LOCATION_DATA = locationData as Record<string, Record<string, string[]>>;
 
@@ -227,6 +228,10 @@ export default function HomeClient({
             <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent hidden sm:inline-block">
               Vidanjörcüm
             </span>
+          </div>
+
+          <div className="hidden md:block">
+            <ActiveUsersCounter />
           </div>
 
           <div>

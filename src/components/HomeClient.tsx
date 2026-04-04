@@ -224,7 +224,7 @@ export default function HomeClient({
       <header className="fixed top-0 w-full z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-1 sm:space-x-2 shrink-0">
-            <img src="/icon.png" alt="Vidanjörcüm" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
+            <img src="/icon.png" alt="Vidanjörcüm Logo - Türkiye'nin En Büyük Vidanjör Platformu" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
             <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent hidden sm:inline-block">
               Vidanjörcüm
             </span>
@@ -519,6 +519,23 @@ export default function HomeClient({
       <section id="firms-section" className="bg-slate-900 border-t border-slate-800 pt-10 pb-16 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-slate-950 to-transparent pointer-events-none" />
         <div className="container mx-auto px-4 max-w-6xl relative z-10">
+          
+          {/* Hizmetlerimiz SEO Section */}
+          <div className="mb-20 grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
+            {[
+              { title: "Kanal Açma", desc: "Tıkanmış kanalizasyon ve su giderlerini modern robotik cihazlarla kırmadan dökmeden açıyoruz.", icon: <Search className="w-6 h-6 text-sky-400 mx-auto mb-3" /> },
+              { title: "Logar Temizleme", desc: "Periyodik logar bakımı ve temizliği ile kötü kokuların ve taşmaların önüne geçiyoruz.", icon: <CheckCircle2 className="w-6 h-6 text-sky-400 mx-auto mb-3" /> },
+              { title: "Foseptik Çekimi", desc: "Büyük araç filomuzla foseptik kuyularınızı hijyenik ve hızlı bir şekilde tahliye ediyoruz.", icon: <Truck className="w-6 h-6 text-sky-400 mx-auto mb-3" /> },
+              { title: "Gider Açma", desc: "Mutfak, banyo ve lavabo gider tıkanıklıklarına anında müdahale ederek sorunu çözüyoruz.", icon: <AlertCircle className="w-6 h-6 text-sky-400 mx-auto mb-3" /> },
+            ].map((s, i) => (
+              <div key={i} className="p-6 bg-slate-950/40 rounded-3xl border border-slate-800 hover:border-sky-500/30 transition-all group">
+                {s.icon}
+                <h3 className="text-white font-bold mb-2 group-hover:text-sky-400 transition-colors uppercase tracking-tight">{s.title}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+
           {region && (
             <div className="animate-fade-in mb-24">
               <OperatorList region={region} session={session} />

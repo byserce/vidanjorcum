@@ -6,15 +6,13 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function ActiveUsersCounter() {
   const [count, setCount] = useState(0);
-  const [isInitializing, setIsInitializing] = useState(true);
+  const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
+    setHasMounted(true);
     // Akıllı Simülasyon: 
-    // Gerçek bir API anahtarı yoksa, sitenin "Canlı" görünmesi için 
-    // gerçekçi bir aralıkta (örneğin 12-28 arası) rastgele bir sayı ile başla
     const baseCount = Math.floor(Math.random() * (28 - 12 + 1)) + 12;
     setCount(baseCount);
-    setIsInitializing(false);
 
     const interval = setInterval(() => {
       setCount((prev) => {
@@ -22,12 +20,12 @@ export default function ActiveUsersCounter() {
         const newCount = prev + change;
         return newCount < 5 ? 5 : newCount > 50 ? 50 : newCount;
       });
-    }, 15000); // 15 saniyede bir güncelle
+    }, 15000);
 
     return () => clearInterval(interval);
   }, []);
 
-  if (isInitializing) return null;
+  if (!hasMounted) return <div className="h-8 w-32" />; // Reservasyon alanı
 
   return (
     <motion.div 

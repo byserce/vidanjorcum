@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown, HelpCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -17,6 +17,13 @@ interface Props {
 
 export default function FaqSection({ items, city, district }: Props) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) return <div className="mt-16 h-64 bg-slate-900/10 rounded-3xl animate-pulse" />;
 
   const jsonLd = {
     "@context": "https://schema.org",

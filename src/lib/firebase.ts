@@ -19,7 +19,14 @@ auth.languageCode = 'tr'; // SMS'ler Türkçe gitsin
 
 let analytics: Analytics | undefined;
 if (typeof window !== "undefined") {
-  analytics = getAnalytics(app);
+  // Config eksikse Analytics'in çökmesini engelle
+  if (firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.appId) {
+    try {
+      analytics = getAnalytics(app);
+    } catch (e) {
+      console.warn("Analytics initialization failed:", e);
+    }
+  }
 }
 
 export { app, auth, analytics };

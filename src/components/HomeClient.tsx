@@ -9,6 +9,7 @@ import { MapPin, AlertTriangle, LogIn, LogOut, Search, Clock, Phone, Globe, Lock
 import EditJobModal from "@/components/EditJobModal";
 import locationData from "@/data/location_data.json";
 import ImageMarquee from "@/components/ImageMarquee";
+import Link from "next/link";
 
 const LOCATION_DATA = locationData as Record<string, Record<string, string[]>>;
 
@@ -18,7 +19,13 @@ const JobMap = dynamic(() => import("@/components/JobMap"), {
   loading: () => <div className="h-[500px] w-full bg-slate-900 animate-pulse rounded-3xl flex items-center justify-center text-slate-500">Harita yükleniyor...</div>
 });
 
-export default function HomeClient({ pendingJobsCount }: { pendingJobsCount: number }) {
+export default function HomeClient({ 
+  pendingJobsCount, 
+  initialRegion 
+}: { 
+  pendingJobsCount: number;
+  initialRegion?: { city: string; district?: string };
+}) {
   const { data: session } = useSession();
   const router = useRouter();
   const [jobs, setJobs] = useState<any[]>([]);
@@ -35,6 +42,13 @@ export default function HomeClient({ pendingJobsCount }: { pendingJobsCount: num
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
+    if (initialRegion) {
+      setRegion(initialRegion);
+      setTempCity(initialRegion.city);
+      if (initialRegion.district) setTempDistrict(initialRegion.district);
+      return;
+    }
+
     const saved = localStorage.getItem("vidanjorcum_region");
     if (saved) {
       try {
@@ -42,7 +56,7 @@ export default function HomeClient({ pendingJobsCount }: { pendingJobsCount: num
       } catch(e) {}
     }
     setIsInitializing(false);
-  }, []);
+  }, [initialRegion]);
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -261,12 +275,22 @@ export default function HomeClient({ pendingJobsCount }: { pendingJobsCount: num
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 max-w-2xl leading-tight"
+            className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 max-w-3xl leading-tight"
           >
-            Altyapı Sorunlarına <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-500">
-              Anında Çözüm
-            </span>
+            {initialRegion ? (
+              <>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-500">
+                   {initialRegion.district || initialRegion.city} Vidanjör
+                </span> <br /> Acil Kanal Açma Hizmetleri
+              </>
+            ) : (
+              <>
+                Altyapı Sorunlarına <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-500">
+                  Profesyonel Çözüm
+                </span>
+              </>
+            )}
           </motion.h1>
 
           <motion.p
@@ -567,9 +591,62 @@ export default function HomeClient({ pendingJobsCount }: { pendingJobsCount: num
           </div>
         </div>
       </section>
+
+      {/* SEO Footer Section */}
+      <footer className="bg-slate-950 border-t border-slate-800 py-16">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+            <div>
+              <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+                <Truck className="w-5 h-5 text-sky-500" />
+                Vidanjörcüm Hizmetleri
+              </h3>
+              <ul className="space-y-2 text-slate-400 text-sm">
+                <li>Acil Vidanjör Kiralama</li>
+                <li>Foseptik Çukuru Temizliği</li>
+                <li>Logar ve Kanal Açma</li>
+                <li>Mutfak ve Lavabo Gider Açma</li>
+                <li>Sanayi Tipi Atık Çekimi</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-sky-500" />
+                Popüler Şehirler
+              </h3>
+              <div className="grid grid-cols-2 gap-2 text-slate-400 text-sm">
+                <Link href="/vidanjor/istanbul">İstanbul Vidanjör</Link>
+                <Link href="/vidanjor/ankara">Ankara Vidanjör</Link>
+                <Link href="/vidanjor/izmir">İzmir Vidanjör</Link>
+                <Link href="/vidanjor/antalya">Antalya Vidanjör</Link>
+                <Link href="/vidanjor/bursa">Bursa Vidanjör</Link>
+                <Link href="/vidanjor/kocaeli">Kocaeli Vidanjör</Link>
+              </div>
+            </div>
+            <div>
+              <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+                <Star className="w-5 h-5 text-sky-500" />
+                Hakkımızda
+              </h3>
+              <p className="text-slate-400 text-sm leading-relaxed">
+                Vidanjörcüm, Türkiye'nin her noktasında profesyonel operatörleri müşterilerle buluşturan 
+                ilk ve en büyük vidanjör platformudur. Altyapı sorunlarınıza hızlı, uygun fiyatlı ve garantili çözümler sunuyoruz.
+              </p>
+            </div>
+          </div>
+          <div className="pt-8 border-t border-slate-900 text-center text-slate-600 text-[10px] uppercase font-bold tracking-widest leading-loose">
+             &copy; {new Date().getFullYear()} Vidanjörcüm - Tüm Hakları Saklıdır. <br />
+             Müşteri & Operatör Buluşma Noktası
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
+
+// SEO Footer için Link importu gerebilir, üstte Link yoksa ekle (ama router kullanıyoruz genelde)
+// Aslında statik linkler için normal <a> veya Link farketmez ama Link daha hızlı.
+// Başa import ekliyorum.
 
 // Operators Bileşeni
 function OperatorList({ region, session }: { region: any, session: any }) {

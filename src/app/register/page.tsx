@@ -194,7 +194,11 @@ export default function RegisterPage() {
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       
       // 2. Doğrulama e-postası gönder
-      await sendEmailVerification(userCredential.user);
+      const actionCodeSettings = {
+        url: `${window.location.origin}/auth/verify`,
+        handleCodeInApp: true,
+      };
+      await sendEmailVerification(userCredential.user, actionCodeSettings);
 
       // 3. Bizim veritabanımızda oluştur (Henüz doğrulanmadı olarak)
       const res = await fetch("/api/register", {

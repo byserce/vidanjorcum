@@ -53,6 +53,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Şifre hatalı");
         }
 
+        if (user.role === "USER" && !user.emailVerified) {
+          throw new Error("HESAP_DOGRULANMADI: Lütfen e-posta adresinizi doğrulayın. E-posta gelmediyse gereksiz kutusunu kontrol ediniz.");
+        }
+
         return {
           id: user.id,
           name: user.name,

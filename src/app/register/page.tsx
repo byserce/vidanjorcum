@@ -69,30 +69,51 @@ export default function RegisterPage() {
 
   // Recaptcha'yı adım 2'ye geçince başlat
   useEffect(() => {
-    if (step === 2 && !isVerifying) {
-      const initRecaptcha = () => {
-        if (!(window as any).recaptchaVerifier) {
-          try {
-            (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
-              size: "normal",
-              theme: "dark",
-              callback: () => {
-                setIsCaptchaVerified(true);
-              },
-              "expired-callback": () => {
-                setIsCaptchaVerified(false);
-              }
-            });
-            (window as any).recaptchaVerifier.render();
-          } catch (err) {
-            console.error("Recaptcha Init Error:", err);
-          }
-        }
-      };
+    let retryCount = 0;
+    const maxRetries = 10;
+    
+    const initRecaptcha = () => {
+      // Eğer doğrulama zaten yapıldıysa veya doğrulama ekranındaysak geç
+      if (isVerifying) return;
       
-      const timeout = setTimeout(initRecaptcha, 100);
-      return () => clearTimeout(timeout);
+      const container = document.getElementById("recaptcha-container");
+      
+      if (!container) {
+        if (retryCount < maxRetries) {
+          retryCount++;
+          setTimeout(initRecaptcha, 300); // 300ms sonra tekrar dene
+        }
+        return;
+      }
+
+      if (!(window as any).recaptchaVerifier) {
+        try {
+          (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+            size: "normal",
+            theme: "dark",
+            callback: () => {
+              setIsCaptchaVerified(true);
+            },
+            "expired-callback": () => {
+              setIsCaptchaVerified(false);
+            }
+          });
+          (window as any).recaptchaVerifier.render().catch((err: any) => {
+             console.error("Recaptcha Render Error:", err);
+          });
+        } catch (err) {
+          console.error("Recaptcha Init Error:", err);
+        }
+      }
+    };
+    
+    if (step === 2 && !isVerifying) {
+      setTimeout(initRecaptcha, 500); // Animasyonun bitmesi için biraz bekle
     }
+
+    return () => {
+      // Temizlik gerekiyorsa burada yapılabilir ama genelde global verifier kalır
+    };
   }, [step, isVerifying]);
 
   // Telefon numarası maskeleme logic
@@ -399,7 +420,7 @@ export default function RegisterPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <button
-                    onClick={() => { setRole("USER"); setStep(2); }}
+                    onClick={() => setRole("USER")}
                     className={`group relative p-6 rounded-3xl border-2 transition-all duration-300 text-left overflow-hidden ${
                       role === "USER" 
                         ? "border-sky-500 bg-sky-500/10 shadow-[0_0_20px_rgba(14,165,233,0.1)]" 
@@ -421,7 +442,7 @@ export default function RegisterPage() {
                   </button>
 
                   <button
-                    onClick={() => { setRole("OPERATOR"); setStep(2); }}
+                    onClick={() => setRole("OPERATOR")}
                     className={`group relative p-6 rounded-3xl border-2 transition-all duration-300 text-left overflow-hidden ${
                       role === "OPERATOR" 
                         ? "border-sky-500 bg-sky-500/10 shadow-[0_0_20px_rgba(14,165,233,0.1)]" 
@@ -446,7 +467,8 @@ export default function RegisterPage() {
                 <div className="pt-4">
                   <button 
                     onClick={nextStep}
-                    className="w-full bg-white text-slate-950 font-bold py-4 rounded-2xl hover:bg-sky-50 transition-all flex items-center justify-center space-x-2 group"
+                    disabled={!role}
+                    className="w-full bg-white text-slate-950 font-bold py-4 rounded-2xl hover:bg-sky-50 transition-all flex items-center justify-center space-x-2 group disabled:opacity-50"
                   >
                     <span>Devam Et</span>
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

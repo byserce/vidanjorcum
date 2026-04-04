@@ -93,7 +93,7 @@ export function OtpInput({ length, value, onChange, disabled, color = "sky" }: O
           onPaste={handlePaste}
           disabled={disabled}
           className={`w-full h-14 md:h-16 bg-slate-900/50 border border-slate-800 rounded-xl text-center text-xl md:text-2xl font-bold text-white outline-none transition-all focus:border-${color}-500 focus:ring-4 ${ringColor} ${caretColor} disabled:opacity-50`}
-          placeholder="0"
+          placeholder="X"
         />
       ))}
     </div>

@@ -52,6 +52,7 @@ export default function RegisterPage() {
   const [canResend, setCanResend] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
   const recaptchaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -65,6 +66,34 @@ export default function RegisterPage() {
     }
     return () => clearInterval(interval);
   }, [timer]);
+
+  // Recaptcha'yı adım 2'ye geçince başlat
+  useEffect(() => {
+    if (step === 2 && !isVerifying) {
+      const initRecaptcha = () => {
+        if (!(window as any).recaptchaVerifier) {
+          try {
+            (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+              size: "normal",
+              theme: "dark",
+              callback: () => {
+                setIsCaptchaVerified(true);
+              },
+              "expired-callback": () => {
+                setIsCaptchaVerified(false);
+              }
+            });
+            (window as any).recaptchaVerifier.render();
+          } catch (err) {
+            console.error("Recaptcha Init Error:", err);
+          }
+        }
+      };
+      
+      const timeout = setTimeout(initRecaptcha, 100);
+      return () => clearTimeout(timeout);
+    }
+  }, [step, isVerifying]);
 
   // Telefon numarası maskeleme logic
   const formatPhoneNumber = (value: string) => {
@@ -103,12 +132,22 @@ export default function RegisterPage() {
     if (step > 1) {
       setStep(step - 1);
       setIsVerifying(false); // Eğer doğrulama adımındaysak geri dön
+      setIsCaptchaVerified(false);
+      if ((window as any).recaptchaVerifier) {
+        (window as any).recaptchaVerifier.clear();
+        (window as any).recaptchaVerifier = null;
+      }
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!isCaptchaVerified) {
+      setError("Lütfen robot olmadığınızı doğrulayın.");
+      return;
+    }
+
     if (role === "OPERATOR") {
       // Operatörler için önce doğrulama ekranına geç ve SMS gönder
       const success = await handleSendOtp();
@@ -235,14 +274,12 @@ export default function RegisterPage() {
         return false;
       }
 
-      if (!(window as any).recaptchaVerifier) {
-        (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
-          size: "invisible",
-          callback: () => {},
-        });
-      }
-      
       const appVerifier = (window as any).recaptchaVerifier;
+      if (!appVerifier) {
+        setErrorState("Güvenlik doğrulaması henüz hazır değil. Lütfen sayfayı yenileyin.");
+        return false;
+      }
+
       const result = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
       
       incrementOtpAttempts(formData.phone);
@@ -255,9 +292,11 @@ export default function RegisterPage() {
     } catch (err: any) {
       console.error("SMS Error:", err);
       setErrorState("SMS gönderilirken bir hata oluştu. Lütfen tekrar deneyin.");
+      // Captcha süresi dolmuş olabilir veya hata almış olabilir, resetle
       if ((window as any).recaptchaVerifier) {
         (window as any).recaptchaVerifier.clear();
         (window as any).recaptchaVerifier = null;
+        setIsCaptchaVerified(false);
       }
       return false;
     } finally {
@@ -518,23 +557,32 @@ export default function RegisterPage() {
                     )}
                   </div>
 
-                  <button 
-                    type="submit" 
-                    disabled={loading || (role === "OPERATOR" && !validateTurkishPhone(formData.phone))}
-                    className="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-4 rounded-2xl transition-all disabled:opacity-50 mt-6 shadow-lg shadow-sky-500/20 flex items-center justify-center space-x-2 group"
-                  >
-                    {loading ? (
-                      <div className="w-5 h-5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
-                    ) : (
-                      <>
-                        <span>{role === "OPERATOR" ? "Kodu Gönder ve Doğrula" : "Hesabı Oluştur"}</span>
-                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                      </>
-                    )}
-                  </button>
+                  <div className="pt-4 border-t border-slate-800/50 mt-4 space-y-4">
+                    <div className="flex flex-col items-center space-y-2">
+                       <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Güvenlik Doğrulaması</p>
+                       <div id="recaptcha-container" className="flex justify-center scale-90 origin-top"></div>
+                    </div>
+
+                    <button 
+                      type="submit" 
+                      disabled={loading || !isCaptchaVerified || (role === "OPERATOR" && !validateTurkishPhone(formData.phone))}
+                      className={`w-full font-bold py-4 rounded-2xl transition-all mt-2 shadow-lg flex items-center justify-center space-x-2 group ${
+                        isCaptchaVerified 
+                          ? "bg-sky-500 hover:bg-sky-400 text-slate-950 shadow-sky-500/20" 
+                          : "bg-slate-800 text-slate-500 cursor-not-allowed"
+                      }`}
+                    >
+                      {loading ? (
+                        <div className="w-5 h-5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <>
+                          <span>{role === "OPERATOR" ? "Kodu Gönder ve Doğrula" : "Hesabı Oluştur"}</span>
+                          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </form>
-                
-                <div id="recaptcha-container" className="flex justify-center scale-75 origin-top"></div>
               </motion.div>
             )}
 

@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://vidanjorcum.com"),
   title: {
     default: "Vidanjörcüm - Türkiye'nin En Büyük Vidanjör ve Kanal Açma Platformu",
-    template: "%s | Vidanjörcüm"
+    template: "%s - Acil Vidanjör Hizmetleri | Vidanjörcüm"
   },
   description: "Türkiye'nin her yerinde vidanjör, kanal açma, logar temizleme ve foseptik çekimi için en yakın operatörlere anında ulaşın. 7/24 kesintisiz hizmet.",
   keywords: ["vidanjör", "kanal açma", "logar temizleme", "foseptik çekimi", "vidanjör kiralama", "belediye vidanjör", "acil vidanjör", "istanbul vidanjör", "ankara vidanjör", "izmir vidanjör"],

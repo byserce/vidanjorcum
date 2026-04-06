@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import JsonLd from "@/components/SEO/JsonLd";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
@@ -19,5 +20,10 @@ export default async function Home() {
     }
   });
 
-  return <HomeClient pendingJobsCount={pendingJobsCount} />;
+  return (
+    <>
+      <JsonLd type="Organization" />
+      <HomeClient pendingJobsCount={pendingJobsCount} />
+    </>
+  );
 }

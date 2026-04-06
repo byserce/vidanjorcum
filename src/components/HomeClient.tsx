@@ -553,6 +553,40 @@ export default function HomeClient({
         </div>
       </main>
 
+      {/* How It Works Section */}
+      <section className="py-24 bg-slate-950 relative overflow-hidden">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-black text-white mb-4 tracking-tighter uppercase">Nasıl <span className="text-sky-500">Çalışır?</span></h2>
+            <p className="text-slate-400 font-medium">3 basit adımda altyapı sorunlarınıza çözüm bulun.</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+            {/* Connection Line (Desktop) */}
+            <div className="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-sky-500/20 to-transparent -translate-y-1/2" />
+            
+            {[
+              { step: "01", title: "Konum Seçin", desc: "Bulunduğunuz il ve ilçeyi seçerek size en yakın ekipleri listeleyin.", icon: <MapPin className="w-6 h-6" /> },
+              { step: "02", title: "Operatör Bulun", desc: "Sistemdeki onaylı operatörlerin profillerini ve hizmet türlerini inceleyin.", icon: <Search className="w-6 h-6" /> },
+              { step: "03", title: "Hemen Arayın", desc: "Telefon veya WhatsApp üzerinden doğrudan iletişime geçip hizmet alın.", icon: <Phone className="w-6 h-6" /> }
+            ].map((item, i) => (
+              <div key={i} className="relative z-10 flex flex-col items-center text-center group">
+                <div className="w-20 h-20 rounded-[2rem] bg-slate-900 border border-white/5 flex items-center justify-center mb-6 transition-all group-hover:border-sky-500/50 group-hover:-translate-y-2 shadow-2xl relative">
+                  <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-sky-500 text-slate-950 flex items-center justify-center font-black text-xs shadow-lg shadow-sky-500/30">
+                    {item.step}
+                  </div>
+                  <div className="text-sky-400 group-hover:text-white transition-colors">
+                    {item.icon}
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3 uppercase tracking-tight">{item.title}</h3>
+                <p className="text-sm text-slate-500 leading-relaxed max-w-[250px]">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section id="firms-section" className="bg-slate-900 border-t border-slate-800 pt-10 pb-16 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-slate-950 to-transparent pointer-events-none" />
         <div className="container mx-auto px-4 max-w-6xl relative z-10">
@@ -662,6 +696,39 @@ export default function HomeClient({
                Hizmet verdiğimiz başlıca şehirlerimize aşağıdan ulaşabilir, en yakın operatörü tek tıkla bulabilirsiniz.
              </p>
              <LocationNav type="cities" />
+          </div>
+
+          {/* Testimonials Section */}
+          <div className="mt-32 w-full">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 bg-sky-500/10 border border-sky-500/20 px-4 py-1.5 rounded-full mb-4">
+                <Star className="w-4 h-4 text-sky-400 fill-current" />
+                <span className="text-[10px] font-black text-sky-400 uppercase tracking-widest">Müşteri Deneyimleri</span>
+              </div>
+              <h2 className="text-3xl md:text-5xl font-black text-white mb-4 tracking-tighter uppercase">Kullanıcı <span className="text-sky-500">Yorumları</span></h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                { name: "Ahmet Y.", loc: "İstanbul (Beşiktaş)", text: "Acil vidanjör lazım olduğunda buradan 10 dakika içinde operatör buldum. Çok hızlı ve profesyonel bir sistem.", rating: 5 },
+                { name: "Canan Ş.", loc: "Ankara (Çankaya)", text: "Tıkalı gider için ekip arıyordum, sistemdeki yorumlara bakarak doğru kişiyi seçtim. Sorunsuz çözüldü.", rating: 5 },
+                { name: "Mehmet K.", loc: "İzmir (Bornova)", text: "Fiyatlar şeffaf ve operatörlere ulaşmak çok kolay. Altyapı sorunu olan herkese tavsiye ederim.", rating: 5 }
+              ].map((t, i) => (
+                <div key={i} className="glass-card p-8 rounded-[3rem] border border-white/5 hover:border-sky-500/30 transition-all flex flex-col h-full relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 p-8">
+                    <img src="/icon.png" className="w-8 h-8 opacity-5 grayscale group-hover:grayscale-0 transition-all" alt="logo" />
+                  </div>
+                  <div className="flex gap-1 mb-6">
+                    {[...Array(t.rating)].map((_, i) => <Star key={i} className="w-4 h-4 text-sky-500 fill-current" />)}
+                  </div>
+                  <p className="text-slate-300 italic mb-8 flex-1 leading-relaxed">"{t.text}"</p>
+                  <div className="pt-6 border-t border-white/5">
+                    <p className="text-white font-bold text-sm tracking-tight">{t.name}</p>
+                    <p className="text-sky-400 text-[10px] font-black uppercase tracking-tighter">{t.loc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

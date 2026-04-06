@@ -150,6 +150,12 @@ export default async function LocationPage({ params }: Props) {
           name: `${locationName} Vidanjör Hizmetleri - Vidanjörcüm`,
         }} 
       />
+      <JsonLd 
+        type="FAQPage" 
+        data={{ 
+          mainEntity: faqs
+        }} 
+      />
       
       <div className="container mx-auto px-4 pt-24 max-w-6xl">
         <Breadcrumbs items={breadcrumbItems} />

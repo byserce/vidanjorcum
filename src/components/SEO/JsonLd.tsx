@@ -3,7 +3,7 @@
 import Script from "next/script";
 
 interface JsonLdProps {
-  type?: "LocalBusiness" | "Service" | "WebSite";
+  type?: "LocalBusiness" | "Service" | "WebSite" | "Organization" | "FAQPage";
   data?: any;
 }
 
@@ -23,6 +23,39 @@ export default function JsonLd({ type = "WebSite", data }: JsonLdProps) {
         "target": "https://vidanjorcum.com/search?q={search_term_string}",
         "query-input": "required name=search_term_string"
       }
+    };
+  } else if (type === "Organization") {
+    schema = {
+      ...schema,
+      "@type": "Organization",
+      "name": "Vidanjörcüm",
+      "url": "https://vidanjorcum.com",
+      "logo": "https://vidanjorcum.com/icon.png",
+      "sameAs": [
+        "https://facebook.com/vidanjorcum",
+        "https://instagram.com/vidanjorcum",
+        "https://twitter.com/vidanjorcum"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+90",
+        "contactType": "customer service",
+        "areaServed": "TR",
+        "availableLanguage": "Turkish"
+      }
+    };
+  } else if (type === "FAQPage") {
+    schema = {
+      ...schema,
+      "@type": "FAQPage",
+      "mainEntity": data?.mainEntity?.map((item: any) => ({
+        "@type": "Question",
+        "name": item.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": item.answer
+        }
+      })) || []
     };
   } else if (type === "LocalBusiness") {
     schema = {

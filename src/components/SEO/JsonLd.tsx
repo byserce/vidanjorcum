@@ -3,7 +3,7 @@
 import Script from "next/script";
 
 interface JsonLdProps {
-  type?: "LocalBusiness" | "Service" | "WebSite" | "Organization" | "FAQPage";
+  type?: "LocalBusiness" | "Service" | "WebSite" | "Organization" | "FAQPage" | "BreadcrumbList";
   data?: any;
 }
 
@@ -55,6 +55,17 @@ export default function JsonLd({ type = "WebSite", data }: JsonLdProps) {
           "@type": "Answer",
           "text": item.answer
         }
+      })) || []
+    };
+  } else if (type === "BreadcrumbList") {
+    schema = {
+      ...schema,
+      "@type": "BreadcrumbList",
+      "itemListElement": data?.itemListElement?.map((item: any, index: number) => ({
+        "@type": "ListItem",
+        "position": index + 1,
+        "name": item.name,
+        "item": `https://vidanjorcum.com${item.item}`
       })) || []
     };
   } else if (type === "LocalBusiness") {

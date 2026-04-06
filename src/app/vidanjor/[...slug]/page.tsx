@@ -156,6 +156,16 @@ export default async function LocationPage({ params }: Props) {
           mainEntity: faqs
         }} 
       />
+      <JsonLd 
+        type="BreadcrumbList" 
+        data={{ 
+          itemListElement: [
+            { name: "Ana Sayfa", item: "/" },
+            { name: city, item: `/vidanjor/${city.toLocaleLowerCase('tr-TR').replace(/\s+/g, '-')}` },
+            ...(district ? [{ name: district, item: `/vidanjor/${city.toLocaleLowerCase('tr-TR').replace(/\s+/g, '-')}/${district.toLocaleLowerCase('tr-TR').replace(/\s+/g, '-')}` }] : [])
+          ]
+        }} 
+      />
       
       <div className="container mx-auto px-4 pt-24 max-w-6xl">
         <Breadcrumbs items={breadcrumbItems} />

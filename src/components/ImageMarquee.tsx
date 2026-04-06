@@ -17,7 +17,7 @@ export default function ImageMarquee() {
   const doubledImages = [...images, ...images];
 
   return (
-    <div className="w-full overflow-hidden bg-slate-950/50 pb-4 border-y border-slate-900/50 relative">
+    <div className="w-full overflow-hidden bg-white/[0.02] py-12 border-y border-white/5 relative">
       {/* Yanlardaki solma efektleri (gradient mask) */}
       <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-slate-950 to-transparent z-10 pointer-events-none" />
       <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-slate-950 to-transparent z-10 pointer-events-none" />

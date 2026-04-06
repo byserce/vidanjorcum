@@ -288,9 +288,14 @@ export default function HomeClient({
         <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none animate-pulse delay-1000" />
 
         {/* Görsel Şerit (Marquee) Section */}
-        <div className="relative z-20 overflow-hidden mb-12 w-full pt-12 md:pt-20">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.5 }}
+          className="relative z-20 overflow-hidden mb-12 w-full pt-12 md:pt-20"
+        >
           <ImageMarquee />
-        </div>
+        </motion.div>
 
         <div className="container mx-auto px-4 relative z-10 flex flex-col items-center text-center">
           <motion.div
@@ -592,23 +597,36 @@ export default function HomeClient({
         <div className="container mx-auto px-4 max-w-6xl relative z-10">
           
           {/* Hizmetlerimiz SEO Section */}
-          <div className="mb-20 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, staggerChildren: 0.1 }}
+            className="mb-20 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8"
+          >
             {[
               { title: "Kanal Açma", desc: "Robotik cihazlarla kırmadan kanal açma.", icon: <Search className="w-8 h-8 text-sky-400" />, badge: "7/24 Acil" },
               { title: "Logar Temizlik", desc: "Periyodik bakım ve logar tahliyesi.", icon: <CheckCircle2 className="w-8 h-8 text-sky-400" />, badge: "Hijyenik" },
               { title: "Foseptik", desc: "Büyük araçlarla hızlı ve temiz çekim.", icon: <Truck className="w-8 h-8 text-sky-400" />, badge: "Uzman Ekip" },
               { title: "Gider Açma", desc: "Mutfak ve banyo lavabo tıkanıklıkları.", icon: <AlertCircle className="w-8 h-8 text-sky-400" />, badge: "Garantili" },
             ].map((s, i) => (
-              <div key={i} className="p-6 glass-card rounded-[2.5rem] text-center group hover:border-sky-500/30 transition-all flex flex-col items-center">
-                <div className="w-16 h-16 bg-sky-500/10 rounded-2xl flex items-center justify-center mb-6 border border-sky-500/20 group-hover:scale-110 transition-transform">
+              <motion.div 
+                key={i} 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="p-6 glass-card rounded-[2.5rem] text-center group hover:border-sky-500/30 transition-all flex flex-col items-center"
+              >
+                <div className="w-16 h-16 bg-sky-500/10 rounded-2xl flex items-center justify-center mb-6 border border-sky-500/20 group-hover:scale-110 group-hover:rotate-3 transition-transform">
                   {s.icon}
                 </div>
                 <div className="bg-sky-500/10 text-sky-400 text-[8px] font-black uppercase px-2 py-0.5 rounded-full border border-sky-500/20 mb-3">{s.badge}</div>
                 <h3 className="text-white font-black mb-3 group-hover:text-sky-400 transition-colors uppercase tracking-tight text-sm md:text-base">{s.title}</h3>
                 <p className="text-[10px] md:text-xs text-slate-500 leading-relaxed font-medium">{s.desc}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
           {region && (
             <div className="animate-fade-in mb-24">
@@ -699,7 +717,12 @@ export default function HomeClient({
           </div>
 
           {/* Testimonials Section */}
-          <div className="mt-32 w-full">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="mt-32 w-full"
+          >
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 bg-sky-500/10 border border-sky-500/20 px-4 py-1.5 rounded-full mb-4">
                 <Star className="w-4 h-4 text-sky-400 fill-current" />
@@ -714,7 +737,14 @@ export default function HomeClient({
                 { name: "Canan Ş.", loc: "Ankara (Çankaya)", text: "Tıkalı gider için ekip arıyordum, sistemdeki yorumlara bakarak doğru kişiyi seçtim. Sorunsuz çözüldü.", rating: 5 },
                 { name: "Mehmet K.", loc: "İzmir (Bornova)", text: "Fiyatlar şeffaf ve operatörlere ulaşmak çok kolay. Altyapı sorunu olan herkese tavsiye ederim.", rating: 5 }
               ].map((t, i) => (
-                <div key={i} className="glass-card p-8 rounded-[3rem] border border-white/5 hover:border-sky-500/30 transition-all flex flex-col h-full relative overflow-hidden group">
+                <motion.div 
+                  key={i} 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.2 }}
+                  className="glass-card p-8 rounded-[3rem] border border-white/5 hover:border-sky-500/30 transition-all flex flex-col h-full relative overflow-hidden group"
+                >
                   <div className="absolute top-0 right-0 p-8">
                     <img src="/icon.png" className="w-8 h-8 opacity-5 grayscale group-hover:grayscale-0 transition-all" alt="logo" />
                   </div>
@@ -726,10 +756,10 @@ export default function HomeClient({
                     <p className="text-white font-bold text-sm tracking-tight">{t.name}</p>
                     <p className="text-sky-400 text-[10px] font-black uppercase tracking-tighter">{t.loc}</p>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 

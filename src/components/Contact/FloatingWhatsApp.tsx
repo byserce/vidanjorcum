@@ -94,12 +94,12 @@ export default function FloatingWhatsApp() {
 
                <a 
                  href={`tel:+905050366080`}
-                 className="w-full bg-slate-800 hover:bg-slate-700 text-white px-5 py-4 rounded-2xl flex items-center gap-3 transition-all border border-slate-700 shadow-xl active:scale-95 group/btn"
+                 className="w-full bg-slate-800 hover:bg-slate-700 text-white px-5 py-4 rounded-2xl flex items-center gap-3 transition-all border border-slate-700 shadow-xl active:scale-95 group/btn animate-pulse-glow"
                >
-                 <Phone className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
+                 <Phone className="w-5 h-5 group-hover/btn:rotate-12 transition-transform text-sky-400" />
                  <div className="flex flex-col items-start leading-tight">
-                   <span className="text-[9px] uppercase font-black tracking-tighter opacity-70">Doğrudan Ara</span>
-                   <span className="font-bold text-sm">Müşteri Hattı</span>
+                   <span className="text-[9px] uppercase font-black tracking-tighter opacity-70">Acil Hat</span>
+                   <span className="font-bold text-sm">Hemen Ara</span>
                  </div>
                </a>
             </div>

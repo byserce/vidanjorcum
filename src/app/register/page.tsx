@@ -389,10 +389,10 @@ export default function RegisterPage() {
       {step > 1 && !isVerifying && (
         <button 
           onClick={prevStep}
-          className="fixed top-8 left-8 z-50 flex items-center space-x-2 text-slate-400 hover:text-white transition-colors bg-slate-900/50 backdrop-blur-md px-4 py-2 rounded-full border border-slate-800"
+          className="fixed top-4 left-4 sm:top-8 sm:left-8 z-50 flex items-center space-x-2 text-slate-400 hover:text-white transition-colors bg-slate-900/50 backdrop-blur-md px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border border-slate-800 shadow-xl"
         >
           <ChevronLeft className="w-4 h-4" />
-          <span className="text-sm font-medium">Geri Dön</span>
+          <span className="text-xs sm:text-sm font-medium">Geri Dön</span>
         </button>
       )}
 
@@ -412,7 +412,7 @@ export default function RegisterPage() {
       </motion.div>
 
       <div className="w-full max-w-lg relative z-10">
-        <div className="bg-slate-900/40 backdrop-blur-2xl border border-slate-800/50 rounded-[2.5rem] p-8 md:p-10 shadow-2xl shadow-black/50 overflow-hidden relative">
+        <div className="bg-slate-900/40 backdrop-blur-2xl border border-slate-800/50 rounded-3xl sm:rounded-[2.5rem] p-6 sm:p-10 shadow-2xl shadow-black/50 overflow-hidden relative">
           {/* Subtle glow effect inside */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-sky-500/5 rounded-full blur-3xl" />
           

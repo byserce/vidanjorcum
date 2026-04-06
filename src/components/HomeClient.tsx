@@ -11,6 +11,8 @@ import locationData from "@/data/location_data.json";
 import ImageMarquee from "@/components/ImageMarquee";
 import Link from "next/link";
 import ActiveUsersCounter from "@/components/ActiveUsersCounter";
+import AnnouncementBar from "@/components/AnnouncementBar";
+import { ShieldCheck, Zap, Award, Users } from "lucide-react";
 
 const LOCATION_DATA = locationData as Record<string, Record<string, string[]>>;
 
@@ -221,78 +223,100 @@ export default function HomeClient({
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-sky-500 selection:text-white">
-      <header className="fixed top-0 w-full z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-1 sm:space-x-2 shrink-0">
-            <img src="/icon.png" alt="Vidanjörcüm Logo - Türkiye'nin En Büyük Vidanjör Platformu" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
-            <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-sky-400 to-blue-600 bg-clip-text text-transparent hidden sm:inline-block">
-              Vidanjörcüm
+      <AnnouncementBar />
+      
+      <header className="sticky top-0 w-full z-50 glass-header">
+        <div className="container mx-auto px-4 h-14 md:h-16 flex items-center justify-between">
+          <Link href="/" className="flex items-center space-x-2 sm:space-x-3 shrink-0 group">
+            <div className="relative">
+              <div className="absolute inset-0 bg-sky-500 blur-lg opacity-20 group-hover:opacity-40 transition-opacity" />
+              <img src="/icon.png" alt="Vidanjörcüm Logo" className="w-8 h-8 md:w-10 md:h-10 object-contain relative z-10 group-hover:scale-110 transition-transform" />
+            </div>
+            <span className="text-lg md:text-2xl font-black bg-gradient-to-r from-white via-sky-200 to-white bg-clip-text text-transparent tracking-tighter">
+              vidanjörcüm
             </span>
-          </div>
+          </Link>
 
-          <div className="hidden md:block">
+          <div className="hidden lg:block">
             <ActiveUsersCounter />
           </div>
 
-          <div>
+          <div className="flex items-center gap-2 md:gap-4">
             {session ? (
-              <div className="flex items-center space-x-4">
-                <div className="flex flex-col items-end sm:items-start text-right sm:text-left">
-                  <span className="text-sm text-white font-medium block leading-none">
+              <div className="flex items-center gap-2 md:gap-4">
+                <div className="hidden sm:flex flex-col items-end text-right">
+                  <span className="text-xs font-bold text-white leading-none truncate max-w-[100px]">
                     {session.user?.name}
                   </span>
-                  <span className="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded-full border border-slate-700 uppercase tracking-tighter mt-1">
+                  <span className="text-[9px] text-sky-400 font-black uppercase tracking-tighter mt-1">
                     {(session.user as any).role === 'OPERATOR' ? 'Operatör' : 'Müşteri'}
                   </span>
                 </div>
                 {(session.user as any).role === 'OPERATOR' && (
                   <button 
                     onClick={() => router.push('/operator')}
-                    className="flex items-center space-x-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-1.5 sm:px-3 rounded-full transition-all text-[10px] sm:text-xs font-bold"
+                    className="flex items-center gap-1.5 bg-sky-500 text-slate-950 px-3 md:px-4 py-1.5 md:py-2 rounded-full transition-all text-[10px] md:text-xs font-black shadow-lg shadow-sky-500/20 active:scale-95"
                   >
-                    <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                    <span className="hidden sm:inline">Operatör İşlemleri</span>
-                    <span className="sm:hidden">Panelim</span>
+                    <Zap className="w-3 h-3 md:w-4 md:h-4 fill-current" />
+                    <span className="hidden md:inline">PANELİM</span>
+                    <span className="md:hidden">PANEL</span>
                   </button>
                 )}
-                <button onClick={() => signOut()} className="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded-full transition-all text-sm font-medium">
-                  <LogOut className="w-4 h-4" /><span className="hidden sm:inline">Çıkış</span>
+                <button onClick={() => signOut()} className="p-2 md:p-2.5 bg-white/5 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 rounded-full transition-all border border-white/5">
+                  <LogOut className="w-4 h-4 md:w-5 md:h-5" />
                 </button>
               </div>
             ) : (
-              <button onClick={() => signIn()} className="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-full transition-all text-sm font-medium">
-                <LogIn className="w-4 h-4" /><span>Giriş Yap</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => signIn()} 
+                  className="flex items-center gap-2 bg-white/5 hover:bg-white/10 text-white px-4 md:px-6 py-2 md:py-2.5 rounded-full transition-all text-xs md:text-sm font-bold border border-white/10 shadow-xl"
+                >
+                  <LogIn className="w-4 h-4" />
+                  <span>Giriş</span>
+                </button>
+              </div>
             )}
           </div>
         </div>
       </header>
 
-      <main className="flex-1 pt-16 pb-12 flex flex-col items-center justify-center relative overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-sky-600/20 rounded-full blur-[120px] pointer-events-none" />
+      <main className="flex-1 pb-16 flex flex-col items-center justify-center relative overflow-hidden mesh-bg">
+        {/* Animated Background Orbs */}
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-sky-500/10 rounded-full blur-[120px] pointer-events-none animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none animate-pulse delay-1000" />
 
         {/* Görsel Şerit (Marquee) Section */}
-        <div className="relative z-20 overflow-hidden mb-6 w-full">
+        <div className="relative z-20 overflow-hidden mb-12 w-full pt-12 md:pt-20">
           <ImageMarquee />
         </div>
 
         <div className="container mx-auto px-4 relative z-10 flex flex-col items-center text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="inline-flex items-center gap-2 bg-sky-500/10 border border-sky-500/20 px-4 py-1.5 rounded-full mb-6 md:mb-8 hover:bg-sky-500/20 transition-colors group cursor-default"
+          >
+            <div className="w-2 h-2 bg-sky-500 rounded-full animate-pulse" />
+            <span className="text-[10px] md:text-xs font-black text-sky-400 uppercase tracking-[0.2em]">Türkiye'nin Vidanjör Platformu</span>
+          </motion.div>
+
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 max-w-3xl leading-tight"
+            className="text-3xl xs:text-4xl md:text-7xl font-black tracking-tight mb-4 md:mb-6 max-w-5xl leading-[1.1] text-white"
           >
             {initialRegion ? (
               <>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-500">
+                <span className="text-transparent bg-clip-text premium-gradient">
                    {initialRegion.district || initialRegion.city} Vidanjör
-                </span> <br /> Acil Kanal Açma Hizmetleri
+                </span> <br /> Acil Kanal Açma
               </>
             ) : (
               <>
                 Altyapı Sorunlarına <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-500">
-                  Profesyonel Çözüm
+                <span className="text-transparent bg-clip-text premium-gradient">
+                  Kesin Çözüm.
                 </span>
               </>
             )}
@@ -302,9 +326,10 @@ export default function HomeClient({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-base md:text-lg text-slate-400 mb-8 max-w-lg"
+            className="text-sm md:text-xl text-slate-400 mb-8 md:mb-12 max-w-2xl px-4 leading-relaxed font-medium"
           >
-            Bölgendeki en yakın ve müsait vidanjör operatörlerine sadece tek tıkla ulaş. Güvenilir, hızlı ve konum bazlı hizmet.
+            Size en yakın profesyonel vidanjör operatörlerini anında bulun, 
+            <span className="text-white font-bold"> tek tıkla</span> iletişime geçin.
           </motion.p>
 
           <motion.div
@@ -313,23 +338,23 @@ export default function HomeClient({
             transition={{ delay: 0.2 }}
             className="flex flex-col gap-8 w-full max-w-2xl mx-auto items-center"
           >
-            <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md mx-auto">
+            <div className="flex flex-col sm:flex-row gap-4 w-full max-w-xl mx-auto">
               <button
                 onClick={() => session ? router.push("/post-job") : router.push("/login/customer")}
-                className="flex-1 group relative overflow-hidden bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold px-6 py-4 rounded-2xl transition-all flex items-center justify-center space-x-2"
+                className="flex-1 group relative overflow-hidden premium-gradient text-white font-black px-8 py-5 rounded-[2rem] transition-all flex items-center justify-center space-x-3 shadow-[0_20px_50px_rgba(14,165,233,0.3)] hover:-translate-y-1 active:scale-95"
               >
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                <MapPin className="w-5 h-5 relative z-10" />
-                <span className="relative z-10">Vidanjör Talebi Oluştur</span>
+                <Zap className="w-6 h-6 relative z-10 fill-current" />
+                <span className="relative z-10 text-base md:text-lg">Hemen Talep Oluştur</span>
               </button>
 
               {!session && (
                 <button
                   onClick={() => router.push("/login/operator")}
-                  className="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-semibold px-6 py-4 rounded-2xl transition-all border border-slate-700 hover:border-slate-600 flex items-center justify-center space-x-2"
+                  className="flex-1 bg-white/5 hover:bg-white/10 text-white font-bold px-8 py-5 rounded-[2rem] transition-all border border-white/10 hover:border-white/20 flex items-center justify-center space-x-3 backdrop-blur-md active:scale-95 shadow-xl"
                 >
-                  <Truck className="w-5 h-5 text-sky-400" />
-                  <span>Vidanjörcüyüm, Giriş Yap</span>
+                  <Truck className="w-6 h-6 text-sky-400" />
+                  <span className="text-base md:text-lg">Operatör Girişi</span>
                 </button>
               )}
             </div>
@@ -427,54 +452,65 @@ export default function HomeClient({
             )}
 
             {/* Basic Location Selector in Hero */}
-            <div className="w-full bg-slate-900/40 backdrop-blur-md border border-slate-800 p-6 rounded-3xl shadow-xl flex flex-col items-center">
-              <p className="text-slate-300 text-sm font-medium mb-4 flex items-center gap-2">
-                <Globe className="w-4 h-4 text-sky-400" />
-                Bölgendeki vidanjörcüleri ve ilanları görmek için konum seç:
+            <div className="w-full glass-card p-6 md:p-8 rounded-[3rem] shadow-2xl flex flex-col items-center max-w-3xl relative">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-sky-500 text-slate-950 text-[10px] font-black px-4 py-1 rounded-full uppercase tracking-widest shadow-lg shadow-sky-500/20">
+                Hızlı Arama
+              </div>
+
+              <p className="text-slate-300 text-sm md:text-base font-bold mb-6 flex items-center gap-2">
+                <Globe className="w-5 h-5 text-sky-400 animate-pulse" />
+                Bölgendeki operatörleri hemen listele:
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-3 w-full">
-                <button 
-                  onClick={handleGeolocation} 
-                  disabled={loadingLocation}
-                  className="sm:w-auto bg-slate-800 hover:bg-slate-700 text-white px-4 py-3 rounded-xl flex items-center justify-center border border-slate-700 transition-all disabled:opacity-50 text-sm whitespace-nowrap"
-                  title="Konumumu Bul"
-                >
-                  <MapPin className={`w-4 h-4 mr-2 ${loadingLocation ? "animate-bounce" : ""}`} />
-                  {loadingLocation ? "Bulunuyor..." : "Konumumu Bul"}
-                </button>
-
-                <div className="flex flex-1 gap-2">
-                  <select 
-                    value={tempCity} 
-                    onChange={(e) => {
-                      setTempCity(e.target.value);
-                      setTempDistrict("");
-                    }}
-                    className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-3 text-white outline-none focus:border-sky-500 appearance-none text-sm"
+              <div className="flex flex-col gap-4 w-full">
+                <div className="flex flex-col sm:flex-row gap-4 w-full">
+                  <button 
+                    onClick={handleGeolocation} 
+                    disabled={loadingLocation}
+                    className="w-full sm:w-auto bg-white/5 hover:bg-white/10 text-white px-5 py-4 rounded-2xl flex items-center justify-center border border-white/10 transition-all disabled:opacity-50 text-sm font-bold active:scale-95"
                   >
-                    <option value="">İl Seçiniz</option>
-                    {Object.keys(LOCATION_DATA).map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                  
-                  <select 
-                    value={tempDistrict} 
-                    onChange={(e) => setTempDistrict(e.target.value)}
+                    <MapPin className={`w-5 h-5 mr-2 ${loadingLocation ? "animate-bounce text-sky-400" : "text-sky-400"}`} />
+                    {loadingLocation ? "Bulunuyor..." : "Konumumu Bul"}
+                  </button>
+
+                  <div className="flex flex-1 gap-3">
+                    <div className="relative flex-1 group">
+                      <select 
+                        value={tempCity} 
+                        onChange={(e) => {
+                          setTempCity(e.target.value);
+                          setTempDistrict("");
+                        }}
+                        className="w-full bg-slate-950/50 border border-white/5 rounded-2xl pl-4 pr-10 py-4 text-white outline-none focus:border-sky-500 appearance-none text-sm cursor-pointer transition-all hover:bg-slate-950"
+                      >
+                        <option value="">İl Seçiniz</option>
+                        {Object.keys(LOCATION_DATA).map(c => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none group-focus-within:rotate-180 transition-transform" />
+                    </div>
+                    
+                    <div className="relative flex-1 group">
+                      <select 
+                        value={tempDistrict} 
+                        onChange={(e) => setTempDistrict(e.target.value)}
+                        disabled={!tempCity}
+                        className="w-full bg-slate-950/50 border border-white/5 rounded-2xl pl-4 pr-10 py-4 text-white outline-none focus:border-sky-500 appearance-none disabled:opacity-30 text-sm cursor-pointer transition-all hover:bg-slate-950"
+                      >
+                        <option value="">İlçe (Tümü)</option>
+                        {tempCity && Object.keys(LOCATION_DATA[tempCity] || {}).map(d => <option key={d} value={d}>{d}</option>)}
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none group-focus-within:rotate-180 transition-transform" />
+                    </div>
+                  </div>
+
+                  <button 
+                    onClick={handleManualLocationSubmit}
                     disabled={!tempCity}
-                    className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-3 text-white outline-none focus:border-sky-500 appearance-none disabled:opacity-50 text-sm"
+                    className="w-full sm:w-auto premium-gradient text-white font-black px-10 py-4 rounded-2xl transition-all disabled:opacity-50 text-base shadow-lg shadow-sky-600/20 active:scale-95"
                   >
-                    <option value="">İlçe (Tümü)</option>
-                    {tempCity && Object.keys(LOCATION_DATA[tempCity] || {}).map(d => <option key={d} value={d}>{d}</option>)}
-                  </select>
+                    LİSTELE
+                  </button>
                 </div>
-
-                <button 
-                  onClick={handleManualLocationSubmit}
-                  disabled={!tempCity}
-                  className="sm:w-auto bg-sky-600 hover:bg-sky-500 text-white font-bold px-8 py-3 rounded-xl transition-all disabled:opacity-50 text-sm shadow-lg shadow-sky-600/20 active:scale-95"
-                >
-                  Gör
-                </button>
               </div>
 
               {region && (
@@ -521,17 +557,20 @@ export default function HomeClient({
         <div className="container mx-auto px-4 max-w-6xl relative z-10">
           
           {/* Hizmetlerimiz SEO Section */}
-          <div className="mb-20 grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
+          <div className="mb-20 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
             {[
-              { title: "Kanal Açma", desc: "Tıkanmış kanalizasyon ve su giderlerini modern robotik cihazlarla kırmadan dökmeden açıyoruz.", icon: <Search className="w-6 h-6 text-sky-400 mx-auto mb-3" /> },
-              { title: "Logar Temizleme", desc: "Periyodik logar bakımı ve temizliği ile kötü kokuların ve taşmaların önüne geçiyoruz.", icon: <CheckCircle2 className="w-6 h-6 text-sky-400 mx-auto mb-3" /> },
-              { title: "Foseptik Çekimi", desc: "Büyük araç filomuzla foseptik kuyularınızı hijyenik ve hızlı bir şekilde tahliye ediyoruz.", icon: <Truck className="w-6 h-6 text-sky-400 mx-auto mb-3" /> },
-              { title: "Gider Açma", desc: "Mutfak, banyo ve lavabo gider tıkanıklıklarına anında müdahale ederek sorunu çözüyoruz.", icon: <AlertCircle className="w-6 h-6 text-sky-400 mx-auto mb-3" /> },
+              { title: "Kanal Açma", desc: "Robotik cihazlarla kırmadan kanal açma.", icon: <Search className="w-8 h-8 text-sky-400" />, badge: "7/24 Acil" },
+              { title: "Logar Temizlik", desc: "Periyodik bakım ve logar tahliyesi.", icon: <CheckCircle2 className="w-8 h-8 text-sky-400" />, badge: "Hijyenik" },
+              { title: "Foseptik", desc: "Büyük araçlarla hızlı ve temiz çekim.", icon: <Truck className="w-8 h-8 text-sky-400" />, badge: "Uzman Ekip" },
+              { title: "Gider Açma", desc: "Mutfak ve banyo lavabo tıkanıklıkları.", icon: <AlertCircle className="w-8 h-8 text-sky-400" />, badge: "Garantili" },
             ].map((s, i) => (
-              <div key={i} className="p-6 bg-slate-950/40 rounded-3xl border border-slate-800 hover:border-sky-500/30 transition-all group">
-                {s.icon}
-                <h3 className="text-white font-bold mb-2 group-hover:text-sky-400 transition-colors uppercase tracking-tight">{s.title}</h3>
-                <p className="text-xs text-slate-500 leading-relaxed">{s.desc}</p>
+              <div key={i} className="p-6 glass-card rounded-[2.5rem] text-center group hover:border-sky-500/30 transition-all flex flex-col items-center">
+                <div className="w-16 h-16 bg-sky-500/10 rounded-2xl flex items-center justify-center mb-6 border border-sky-500/20 group-hover:scale-110 transition-transform">
+                  {s.icon}
+                </div>
+                <div className="bg-sky-500/10 text-sky-400 text-[8px] font-black uppercase px-2 py-0.5 rounded-full border border-sky-500/20 mb-3">{s.badge}</div>
+                <h3 className="text-white font-black mb-3 group-hover:text-sky-400 transition-colors uppercase tracking-tight text-sm md:text-base">{s.title}</h3>
+                <p className="text-[10px] md:text-xs text-slate-500 leading-relaxed font-medium">{s.desc}</p>
               </div>
             ))}
           </div>
@@ -714,61 +753,90 @@ function OperatorList({ region, session }: { region: any, session: any }) {
   }
 
   return (
-    <div className="space-y-8">
-      <div className="text-center mb-10">
-        <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">
-          {region.city} {region.district ? `- ${region.district}` : ""} Vidanjör Firmaları
-          <span className="ml-3 text-sky-400 text-lg font-medium bg-sky-500/10 px-3 py-1 rounded-full border border-sky-500/20">
-            {operators.length} Firma
-          </span>
+    <div className="space-y-12">
+      <div className="text-center mb-12">
+        <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-4 py-1.5 rounded-full mb-4">
+          <ShieldCheck className="w-4 h-4 text-emerald-400" />
+          <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Tümü Onaylı Firmalar</span>
+        </div>
+        <h3 className="text-3xl md:text-5xl font-black text-white mb-4 tracking-tighter">
+          {region.city} Vidanjör Firmaları
         </h3>
-        <p className="text-slate-400">Bu bölgede hizmet veren profesyonel operatörlere doğrudan ulaşın.</p>
+        <p className="text-slate-400 text-sm md:text-lg max-w-2xl mx-auto font-medium">Bölgenizdeki lisanslı ve güvenilir ekiplere doğrudan ulaşın.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
         {operators.map((op) => (
-          <div key={op.id} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 hover:border-sky-500/50 transition-all shadow-xl group flex flex-col h-full ring-1 ring-white/5 hover:ring-sky-500/30">
-            <div className="flex items-start space-x-3 mb-4">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-slate-800 rounded-2xl flex flex-shrink-0 items-center justify-center overflow-hidden border-2 border-slate-700 group-hover:border-sky-500 transition-colors shadow-inner">
+          <div key={op.id} className="glass-card rounded-[3rem] p-8 hover:border-sky-500/50 transition-all group flex flex-col h-full relative overflow-hidden">
+            <div className="absolute -top-12 -right-12 w-32 h-32 bg-sky-500/5 blur-[40px] rounded-full group-hover:bg-sky-500/10 transition-colors" />
+            
+            <div className="flex items-start gap-5 mb-8 relative z-10">
+              <div className="w-20 h-20 bg-slate-950/50 rounded-3xl flex flex-shrink-0 items-center justify-center overflow-hidden border border-white/5 group-hover:border-sky-500/50 transition-colors shadow-2xl">
                 {op.image ? (
                   <img src={op.image} alt={op.name} className="w-full h-full object-cover" />
                 ) : (
-                  <img src="/icon.png" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" alt="Icon" />
+                  <div className="flex flex-col items-center">
+                    <img src="/icon.png" className="w-10 h-10 object-contain brightness-75 group-hover:brightness-110 transition-all" alt="Icon" />
+                    <span className="text-[8px] font-black text-slate-500 mt-1 uppercase">V-CERT</span>
+                  </div>
                 )}
               </div>
-              <div className="flex-1 min-w-0 pt-1">
-                <div className="flex items-center gap-1.5 mb-1">
-                   <div className="bg-emerald-500/10 text-emerald-400 text-[8px] font-black uppercase px-1.5 py-0.5 rounded border border-emerald-500/20">Onaylı</div>
-                   <h4 className="text-base sm:text-lg font-bold text-white truncate">{op.name || "İsimsiz Operatör"}</h4>
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-col gap-1 mb-2">
+                   <div className="flex items-center gap-1.5">
+                     <span className="bg-emerald-500/10 text-emerald-400 text-[8px] font-black uppercase px-2 py-0.5 rounded border border-emerald-500/20 tracking-tighter">Kurumsal Onaylı</span>
+                     {op.reviewCount > 5 && <Award className="w-3 h-3 text-amber-500" />}
+                   </div>
+                   <h4 className="text-xl font-black text-white leading-tight truncate group-hover:text-sky-400 transition-colors">{op.name || "İsimsiz Firma"}</h4>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center text-amber-500">
-                    <Star className={`w-3 h-3 ${op.avgRating > 0 ? "fill-current" : ""}`} />
-                    <span className="text-xs font-bold ml-1">{op.avgRating > 0 ? op.avgRating : "Yeni"}</span>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1 text-amber-500 bg-amber-500/5 px-2 py-0.5 rounded-full border border-amber-500/10">
+                    <Star className="w-3 h-3 fill-current" />
+                    <span className="text-xs font-black">{op.avgRating > 0 ? op.avgRating : "Yeni"}</span>
                   </div>
-                  <span className="text-[10px] text-slate-500">({op.reviewCount} yorum)</span>
-                </div>
-                <div className="flex items-center text-[10px] text-slate-400 mt-1">
-                  <MapPin className="w-3 h-3 mr-1 text-sky-500/70" />
-                  <span className="truncate">{op.serviceCity} {op.serviceDistricts && op.serviceDistricts !== '["Tümü"]' ? "ve seçili bölgeler" : "- Tüm İl"}</span>
+                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{op.reviewCount || 0} DEĞERLENDİRME</span>
                 </div>
               </div>
             </div>
             
-            <div className="space-y-3 mt-auto">
+            <div className="space-y-4 mb-8 flex-1 relative z-10">
+              <div className="flex items-start gap-3 bg-white/5 p-4 rounded-2xl border border-white/5">
+                <MapPin className="w-4 h-4 mt-0.5 text-sky-500" />
+                <div className="flex flex-col">
+                  <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest leading-none mb-1">Hizmet Alanı</span>
+                  <p className="text-xs text-slate-300 font-bold leading-tight">
+                    {op.serviceCity} {op.serviceDistricts && op.serviceDistricts !== '["Tümü"]' ? "ve seçili ilçeler" : "- Tüm Bölgeler"}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-white/5 px-4 py-2 rounded-xl border border-white/5 flex items-center gap-2">
+                  <Clock className="w-3 h-3 text-emerald-500" />
+                  <span className="text-[10px] font-bold text-slate-400 uppercase">7/24 Aktif</span>
+                </div>
+                <div className="bg-white/5 px-4 py-2 rounded-xl border border-white/5 flex items-center gap-2">
+                  <Users className="w-3 h-3 text-sky-500" />
+                  <span className="text-[10px] font-bold text-slate-400 uppercase">Uzman Ekip</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex flex-col gap-3 mt-auto relative z-10">
               <a 
                 href={`tel:${op.phone}`} 
-                className="w-full bg-sky-500/10 hover:bg-sky-500 hover:text-white text-sky-400 font-bold py-3.5 rounded-2xl transition-all flex items-center justify-center space-x-2 border border-sky-500/20 shadow-lg shadow-sky-500/5 group/phone"
+                className="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-black py-4 rounded-2xl transition-all flex items-center justify-center gap-3 shadow-lg shadow-sky-500/20 group/phone overflow-hidden relative active:scale-95"
               >
-                <Phone className="w-4 h-4 group-hover/phone:animate-bounce" />
-                <span>Ara: {op.phone || "Belirtilmemiş"}</span>
+                <div className="absolute inset-0 bg-white/30 -translate-x-full group-hover/phone:translate-x-full transition-transform duration-700 skew-x-[45deg]" />
+                <Phone className="w-5 h-5 relative z-10 fill-current" />
+                <span className="relative z-10 text-base">HEMEN ARA</span>
               </a>
               
               <button 
                 onClick={() => router.push(`/firms/${op.id}`)}
-                className="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-3 rounded-2xl transition-all flex items-center justify-center space-x-2 border border-slate-700 shadow-lg"
+                className="w-full bg-white/5 hover:bg-white/10 text-white font-bold py-3.5 rounded-2xl transition-all flex items-center justify-center gap-2 border border-white/10 shadow-xl active:scale-95"
               >
-                <span>Detaylı Bilgi & Yorumlar</span>
+                <span>Firma Detaylarını Gör</span>
               </button>
             </div>
           </div>

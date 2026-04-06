@@ -24,4 +24,53 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+
+  .glass-card {
+    @apply bg-slate-900/60 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)] ring-1 ring-white/5;
+  }
+
+  .glass-header {
+    @apply bg-slate-950/80 backdrop-blur-md border-b border-white/5;
+  }
+
+  .premium-gradient {
+    @apply bg-gradient-to-br from-sky-400 via-blue-600 to-indigo-700;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-slate-950;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-slate-800 rounded-full border-2 border-slate-950;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-700;
+  }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes mesh-gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.mesh-bg {
+  background: radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.15) 0%, transparent 50%),
+              radial-gradient(circle at 100% 0%, rgba(59, 130, 246, 0.1) 0%, transparent 40%),
+              radial-gradient(circle at 0% 100%, rgba(79, 70, 229, 0.1) 0%, transparent 40%);
+  background-size: 200% 200%;
+  animation: mesh-gradient 15s ease infinite;
 }

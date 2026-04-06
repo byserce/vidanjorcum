@@ -30,16 +30,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Şehir ve İlçe sayfaları
   const cityPages: MetadataRoute.Sitemap = [];
+  const majorCities = ["istanbul", "ankara", "izmir", "bursa", "antalya", "adana", "kocaeli", "konya", "mersin", "gaziantep"];
   
   Object.keys(LOCATION_DATA).forEach((city) => {
     const slugCity = city.toLocaleLowerCase('tr-TR').replace(/\s+/g, '-');
+    const isMajor = majorCities.includes(slugCity);
     
     // Şehir bazlı sayfa
     cityPages.push({
       url: `${baseUrl}/vidanjor/${slugCity}`,
       lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
+      changeFrequency: 'daily' as const,
+      priority: isMajor ? 0.9 : 0.8,
     });
 
     // İlçe bazlı sayfalar
@@ -49,7 +51,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         url: `${baseUrl}/vidanjor/${slugCity}/${slugDistrict}`,
         lastModified: new Date(),
         changeFrequency: 'weekly' as const,
-        priority: 0.7,
+        priority: isMajor ? 0.8 : 0.7,
       });
     });
   });

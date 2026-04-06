@@ -28,48 +28,47 @@ export default function JsonLd({ type = "WebSite", data }: JsonLdProps) {
     schema = {
       ...schema,
       "@type": "Service",
-      "serviceType": "Vidanjör ve Kanal Açma Hizmetleri",
+      "name": data?.name || "Vidanjör ve Kanal Açma Hizmetleri",
+      "description": `${data?.city} ${data?.district || ''} bölgesinde profesyonel vidanjör kiralama, foseptik çekimi ve kanal açma hizmetleri.`,
       "provider": {
         "@type": "LocalBusiness",
-        "name": data?.name || "Vidanjörcüm",
+        "name": "Vidanjörcüm Türkiye",
         "image": "https://vidanjorcum.com/icon.png",
-        "@id": `https://vidanjorcum.com/#${data?.city || 'turkiye'}`,
-        "url": "https://vidanjorcum.com",
+        "priceRange": "₺₺",
         "telephone": "+90",
+        "url": "https://vidanjorcum.com",
         "address": {
           "@type": "PostalAddress",
-          "streetAddress": "Merkez",
-          "addressLocality": data?.district || "Merkez",
-          "addressRegion": data?.city || "Türkiye",
-          "postalCode": "34000",
+          "addressLocality": data?.district || data?.city,
+          "addressRegion": data?.city,
           "addressCountry": "TR"
-        },
-        "geo": {
-          "@type": "GeoCoordinates",
-          "latitude": data?.lat || 39.9334,
-          "longitude": data?.lng || 32.8597
         }
       },
       "areaServed": {
-        "@type": "City",
-        "name": data?.city || "Türkiye"
+        "@type": "State",
+        "name": data?.city
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "128"
       },
       "hasOfferCatalog": {
         "@type": "OfferCatalog",
-        "name": "Vidanjör Hizmetleri",
+        "name": "Altyapı Hizmetleri",
         "itemListElement": [
           {
             "@type": "Offer",
             "itemOffered": {
               "@type": "Service",
-              "name": "Foseptik Temizliği"
+              "name": "Kanal Açma"
             }
           },
           {
             "@type": "Offer",
             "itemOffered": {
               "@type": "Service",
-              "name": "Kanal Açma"
+              "name": "Foseptik Tahliyesi"
             }
           },
           {

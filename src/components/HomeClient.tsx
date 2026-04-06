@@ -12,7 +12,8 @@ import ImageMarquee from "@/components/ImageMarquee";
 import Link from "next/link";
 import ActiveUsersCounter from "@/components/ActiveUsersCounter";
 import AnnouncementBar from "@/components/AnnouncementBar";
-import { ShieldCheck, Zap, Award, Users } from "lucide-react";
+import { ShieldCheck, Zap, Award, Users, LayoutGrid } from "lucide-react";
+import LocationNav from "@/components/SEO/LocationNav";
 
 const LOCATION_DATA = locationData as Record<string, Record<string, string[]>>;
 
@@ -649,6 +650,18 @@ export default function HomeClient({
                 <JobMap jobs={jobs} />
               )}
             </div>
+          </div>
+
+          <div className="mt-20 pt-20 border-t border-white/5 w-full">
+             <div className="flex items-center gap-3 mb-10">
+                <LayoutGrid className="w-6 h-6 text-sky-500" />
+                <h2 className="text-2xl md:text-4xl font-black text-white tracking-tighter uppercase underline decoration-sky-500/50 decoration-4 underline-offset-8">Öne Çıkan Hizmet Bölgelerimiz</h2>
+             </div>
+             <p className="text-slate-500 text-sm md:text-base font-medium mb-10 max-w-3xl leading-relaxed">
+               Türkiye'nin dört bir yanında uzman vidanjör operatörlerimizle 7/24 hizmetinizdeyiz. 
+               Hizmet verdiğimiz başlıca şehirlerimize aşağıdan ulaşabilir, en yakın operatörü tek tıkla bulabilirsiniz.
+             </p>
+             <LocationNav type="cities" />
           </div>
         </div>
       </section>
